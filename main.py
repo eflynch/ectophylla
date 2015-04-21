@@ -6,8 +6,9 @@ from graphics import *
 
 from kivy.uix.label import Label
 from kivy.graphics.instructions import InstructionGroup
-from kivy.graphics import Color, Ellipse, Line, Rectangle
-from kivy.graphics import PushMatrix, PopMatrix, Translate, Scale, Rotate
+from kivy.graphics import *
+from kivy.graphics.transformation import Matrix
+from kivy.graphics.opengl import *
 from kivy.clock import Clock as kivyClock
 from kivy.resources import resource_find
 
@@ -26,7 +27,7 @@ class MainWidget(BaseWidget):
 			self.setup_scene()
 			PopMatrix()
 			self.cb = Callback(self.reset_gl_context)
-	        Clock.schedule_interval(self.update_scene, 1 / 60.)
+	        kivyClock.schedule_interval(self.update_scene, 1 / 60.)
 	 	self._touches = []
 
 	def setup_gl_context(self, *args):
@@ -75,7 +76,7 @@ class MainWidget(BaseWidget):
 	def update_scene(self, *largs):
 		self.update_glsl()
 		pass
-	# 	self.sphere
+		# self.sphere
 
 class AudioController(object):
 	def __init__(self):
@@ -85,3 +86,5 @@ class AudioController(object):
 class DisplayController(object):
 	def __init__(self):
 		super(DisplayController, self).__init__()
+
+run(MainWidget)
