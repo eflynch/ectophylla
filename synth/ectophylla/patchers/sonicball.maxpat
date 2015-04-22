@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1530.0, 142.0, 122.0, 93.0 ],
+		"rect" : [ 701.0, 136.0, 817.0, 522.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -159,6 +159,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-5",
@@ -205,9 +206,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 2,
 									"outlettype" : [ "jit_gl_texture", "" ],
-									"patching_rect" : [ 115.0, 274.0, 116.0, 22.0 ],
+									"patching_rect" : [ 115.0, 274.0, 317.0, 22.0 ],
 									"style" : "",
-									"text" : "jit.gl.camera win-ctx"
+									"text" : "jit.gl.camera win-ctx @rotatexyz 0. 0. 0. @position 0. 0. 0."
 								}
 
 							}
