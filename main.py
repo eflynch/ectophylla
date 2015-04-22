@@ -48,8 +48,8 @@ class MainWidget(BaseWidget):
 	    Translate(0, 0, -5)
 	    # This Kivy native Rotation is used just for
 	    # enabling rotation scene like trackball
-	    self.rotx = Rotate(0, 1, 0, 0)
-	    self.roty = Rotate(-120, 0, 1, 0) # here just rotate scene for best view
+	    # self.rotx = Rotate(0, 1, 0, 0)
+	    # self.roty = Rotate(-120, 0, 1, 0) # here just rotate scene for best view
 	    self.scale = Scale(1)
 	            
 	    UpdateNormalMatrix()
@@ -71,11 +71,13 @@ class MainWidget(BaseWidget):
 	        )
 	    # Draw sphere in the center
 	    sphere = self.scene.objects['Sphere']
+	    self.sphere_trans = Translate(0, 0, 0)
 	    _draw_element(sphere)
 
 	def update_scene(self, *largs):
+		self.sphere_trans.y += .01
+		self.sphere_trans.x += .01
 		self.update_glsl()
-		pass
 		# self.sphere
 
 class AudioController(object):
