@@ -1,0 +1,11 @@
+Cython==0.19.2
+Kivy==1.8.0
+Kivy-Garden==0.1.1
+matplotlib==1.4.3
+numpy==1.9.1
+PyAudio==0.2.8
+pycparser==2.10
+pygame==1.9.2a0
+pyliblo==0.9.2
+scipy==0.15.1
+six==1.9.0
