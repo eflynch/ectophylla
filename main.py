@@ -1,8 +1,6 @@
-import sys
-sys.path.append('./common')
-from core import *
-from clock import *
-from graphics import *
+from eran.core import *
+from eran.clock import *
+from eran.graphics import *
 
 from kivy.uix.label import Label
 from kivy.graphics.instructions import InstructionGroup
