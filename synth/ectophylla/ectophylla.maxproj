@@ -2,8 +2,8 @@
 	"name" : "ectophylla",
 	"version" : 1,
 	"creationdate" : -782557437,
-	"modificationdate" : -782464337,
-	"viewrect" : [ -6.0, 48.0, 300.0, 500.0 ],
+	"modificationdate" : -782416583,
+	"viewrect" : [ 0.0, 48.0, 300.0, 500.0 ],
 	"autoorganize" : 1,
 	"hideprojectwindow" : 0,
 	"showdependencies" : 1,
@@ -11,6 +11,12 @@
 	"contents" : 	{
 		"patchers" : 		{
 			"ectophylla.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1,
+				"toplevel" : 1
+			}
+,
+			"sonicball.maxpat" : 			{
 				"kind" : "patcher",
 				"local" : 1,
 				"toplevel" : 1
@@ -32,11 +38,6 @@
 			}
 ,
 			"distsynth~.maxpat" : 			{
-				"kind" : "patcher",
-				"local" : 1
-			}
-,
-			"sonicball.maxpat" : 			{
 				"kind" : "patcher",
 				"local" : 1
 			}

@@ -1,0 +1,2 @@
+#!/bin/bash
+cp -r lib/hoa.library.mxo build/ectophylla.app/Contents/Resources/C74/extensions

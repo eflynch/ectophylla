@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 768.0, 166.0, 912.0, 829.0 ],
+		"rect" : [ 1530.0, 142.0, 122.0, 93.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -47,7 +47,7 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 30.0, 70.0, 100.0, 20.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 6.0, 115.0, 100.0, 20.0 ],
+					"presentation_rect" : [ 9.0, 8.0, 100.0, 20.0 ],
 					"style" : "",
 					"text" : "ball off",
 					"texton" : "ball on"
@@ -65,7 +65,7 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 472.5, 254.0, 100.0, 20.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 6.0, 163.0, 100.0, 20.0 ],
+					"presentation_rect" : [ 9.0, 56.0, 100.0, 20.0 ],
 					"style" : "",
 					"text" : "openGL off",
 					"texton" : "openGL on"
@@ -83,7 +83,7 @@
 					"parameter_enable" : 0,
 					"patching_rect" : [ 161.0, 427.0, 100.0, 20.0 ],
 					"presentation" : 1,
-					"presentation_rect" : [ 6.0, 139.0, 100.0, 20.0 ],
+					"presentation_rect" : [ 9.0, 32.0, 100.0, 20.0 ],
 					"style" : "",
 					"text" : "sound off",
 					"texton" : "sound on"
@@ -2041,8 +2041,6 @@
 					"numinlets" : 2,
 					"numoutlets" : 0,
 					"patching_rect" : [ 30.0, 506.0, 45.0, 45.0 ],
-					"presentation" : 1,
-					"presentation_rect" : [ 6.0, 7.0, 103.0, 103.0 ],
 					"style" : ""
 				}
 
