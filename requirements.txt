@@ -1,11 +1,10 @@
 Cython==0.19.2
 Kivy==1.8.0
 Kivy-Garden==0.1.1
-matplotlib==1.4.3
-numpy==1.9.1
 PyAudio==0.2.8
-pycparser==2.10
-pygame==1.9.2a0
+coloredlogs==0.8
+numpy==1.9.2
+-e hg+http://bitbucket.org/pygame/pygame@426c37917dc15ff76708464004a7ade0e691163f#egg=pygame-dev
 pyliblo==0.9.2
-scipy==0.15.1
-six==1.9.0
+requests==2.6.0
+wsgiref==0.1.2

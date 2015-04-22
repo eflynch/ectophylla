@@ -1,6 +1,7 @@
+import logging
+
 import liblo
 import coloredlogs
-import logging
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level=logging.INFO)
