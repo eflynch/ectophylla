@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1355.0, 178.0, 372.0, 461.0 ],
+		"rect" : [ 1276.0, 93.0, 382.0, 450.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -334,7 +334,7 @@
 							"parameter_shortname" : "number[9]",
 							"parameter_type" : 3,
 							"parameter_initial_enable" : 1,
-							"parameter_initial" : [ 2000 ],
+							"parameter_initial" : [ 2500 ],
 							"parameter_invisible" : 1
 						}
 
@@ -2923,12 +2923,12 @@
 			"obj-41" : [ "number[5]", "number[5]", 0 ],
 			"obj-24" : [ "number", "number", 0 ],
 			"obj-43" : [ "number[6]", "number[6]", 0 ],
-			"obj-29" : [ "number[1]", "number[1]", 0 ],
-			"obj-47" : [ "number[8]", "number[8]", 0 ],
-			"obj-32" : [ "number[2]", "number[2]", 0 ],
-			"obj-49" : [ "number[9]", "number[9]", 0 ],
 			"obj-45" : [ "number[7]", "number[7]", 0 ],
+			"obj-32" : [ "number[2]", "number[2]", 0 ],
+			"obj-47" : [ "number[8]", "number[8]", 0 ],
 			"obj-37" : [ "number[3]", "number[3]", 0 ],
+			"obj-49" : [ "number[9]", "number[9]", 0 ],
+			"obj-29" : [ "number[1]", "number[1]", 0 ],
 			"obj-39" : [ "number[4]", "number[4]", 0 ]
 		}
 ,
