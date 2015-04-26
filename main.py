@@ -81,7 +81,8 @@ class MainWidget(BaseWidget):
 		asp = self.width / float(self.height)
 		mat = self.get_look_at()
 
-		proj = Matrix().view_clip(-asp, asp, -1, 1, 1, 100, 1)
+		proj = Matrix()
+		proj.perspective(30, asp, 1, 50)
 
 		self.canvas['projection_mat'] = proj
 		self.canvas['modelview_mat'] = mat
@@ -114,11 +115,11 @@ class MainWidget(BaseWidget):
 			)
 		# Draw sphere in the center
 		sphere = self.scene.objects['Sphere']
-		self.sphere_trans = Translate(0, 0, -1)
+		self.sphere_trans = Translate(0, 0, -5)
 		_draw_element(sphere)
 
 		sphere2 = self.scene.objects['Sphere']
-		self.sphere2_trans = Translate(0, 0, 1)
+		self.sphere2_trans = Translate(0, 0, 5)
 		_draw_element(sphere2)
 
 	def update_scene(self, *largs):
@@ -127,18 +128,22 @@ class MainWidget(BaseWidget):
 
 
 	def on_key_down(self, keycode, modifiers):
-		if keycode[1] == 'q':
+		if keycode[1] == 'q': # up
 			self.eyey -= .1
-		elif keycode[1] == 'e':
+		elif keycode[1] == 'e': # down
 			self.eyey += .1
-		elif keycode[1] == 'd':
-			self.eyex += .1
-		elif keycode[1] == 'a':
-			self.eyex -= .1
-		elif keycode[1] == 's':
-			self.eyez += .1
-		elif keycode[1] == 'w':
-			self.eyez -= .1
+		elif keycode[1] == 'd': # left strafe
+			self.eyez += - 0.1 * np.sin(self.eye_azimuth)
+			self.eyex += 0.1 * np.cos(self.eye_azimuth)
+		elif keycode[1] == 'a': # right strafe
+			self.eyez += 0.1 * np.sin(self.eye_azimuth)
+			self.eyex += - 0.1 * np.cos(self.eye_azimuth)
+		elif keycode[1] == 's': # backwards
+			self.eyez += 0.1 * np.cos(self.eye_azimuth)
+			self.eyex += 0.1 * np.sin(self.eye_azimuth)
+		elif keycode[1] == 'w': # forwards
+			self.eyez -= 0.1 * np.cos(self.eye_azimuth)
+			self.eyex -= 0.1 * np.sin(self.eye_azimuth)
 
 		elif keycode[1] == 'z':
 			self.eye_azimuth += 0.1
@@ -154,94 +159,27 @@ class MainWidget(BaseWidget):
 		PAN_SPEED = 0.005
 		dt = kivyClock.frametime
 
-		# x, y = Window.mouse_pos
-		# if (self.mousex is not None) and (self.mousey is not None):
-		# 	diffx = x - self.mousex
-		# 	diffy = y - self.mousey
-		# 	self.mousex = x
-		# 	self.mousey = y
+		self.update_glsl()
 
-		# 	dazimuth = - PAN_SPEED * diffx
-		# 	delevation = PAN_SPEED * diffy
+	def define_rotate_angle(self, touch):
+		x_angle = - (touch.dx/self.width) * 2 * np.pi
+		y_angle = (touch.dy/self.height) * np.pi
+		return x_angle, y_angle
 
-		# 	self.eye_azimuth += dazimuth
-		# 	self.eye_elevation += delevation
+	def on_touch_down(self, touch):
+		# print touch.profile.
+		self._touch = touch
+		touch.grab(self)
+		self._touches.append(touch)
 
-		# 	if self.eye_azimuth >= np.pi:
-		# 		self.eye_azimuth -= 2 * np.pi
-		# 	elif self.eye_azimuth < - np.pi:
-		# 		self.eye_azimuth += 2 * np.pi
+	def on_touch_up(self, touch): 
+		touch.ungrab(self)
+		self._touches.remove(touch)
 
-		# 	if self.eye_elevation > np.pi / 2.0 :
-		# 		self.eye_elevation = np.pi / 2.0
-		# 	elif self. eye_elevation < - np.pi / 2.0:
-		# 		self.eye_elevation = - np.pi / 2.0
-		# else:
-		# 	self.mousex = x
-		# 	self.mousey = y
-
-		print self.eye_azimuth / np.pi , self.eye_elevation / np.pi
-
+	def on_touch_move(self, touch):
 		self.update_glsl()
 		self.send_camera_pos(self.eyex, self.eyey, self.eyez)
 		self.send_camera_angle(self.eye_azimuth, self.eye_elevation)
-
-	# def define_rotate_angle(self, touch):
-	# 	x_angle = (touch.dx/self.width)*360
-	# 	y_angle = -1*(touch.dy/self.height)*360
-	# 	return x_angle, y_angle
-
-	# def on_touch_down(self, touch):
-	# 	# print touch.profile.
-	# 	self._touch = touch
-	# 	touch.grab(self)
-	# 	self._touches.append(touch)
-
-	# def on_touch_up(self, touch): 
-	# 	touch.ungrab(self)
-	# 	self._touches.remove(touch)
-
-	# def on_touch_move(self, touch):
-	# 	self.update_glsl()
-
-
-	# 	if touch in self._touches and touch.grab_current == self:
-	# 		if len(self._touches) == 1:
-	# 			# here do just rotation        
-	# 			ax, ay = self.define_rotate_angle(touch)
-	# 			self.centerx += ax
-	# 			self.centery -= ay
-	# 			# self.roty.angle += ax
-	# 			# self.rotx.angle += ay
-
-	# 		elif len(self._touches) == 2: 
-	# 			touch1, touch2 = self._touches 
-	# 			old_pos1 = (touch1.x - touch1.dx, touch1.y - touch1.dy)
-	# 			old_pos2 = (touch2.x - touch2.dx, touch2.y - touch2.dy)
-				
-	# 			old_dx = old_pos1[0] - old_pos2[0]
-	# 			old_dy = old_pos1[1] - old_pos2[1]
-				
-	# 			old_distance = (old_dx*old_dx + old_dy*old_dy)
-				
-	# 			new_dx = touch1.x - touch2.x
-	# 			new_dy = touch1.y - touch2.y
-				
-	# 			new_distance = (new_dx*new_dx + new_dy*new_dy)
-				
-	# 			SCALE_FACTOR = 0.01
-				
-	# 			if new_distance > old_distance: 
-	# 				scale = SCALE_FACTOR
-	# 			elif new_distance == old_distance:
-	# 				scale = 0
-	# 			else:
-	# 				scale = -1*SCALE_FACTOR
-					
-	# 			xyz = self.scale.xyz
-				
-	# 			if scale:
-	# 				self.scale.xyz = tuple(p + scale for p in xyz)
 
 	def send_note(self, pitch, velocity, duration, start_pos, end_pos, time):
 		logger.debug('Note (%s, %s, %s): %s --%s--> %s' % (pitch, velocity,
@@ -258,6 +196,24 @@ class MainWidget(BaseWidget):
 	def send_camera_angle(self, azimuth, elevation):
 		logger.debug('Camera Angle: %s %s' % (azimuth, elevation))
 		liblo.send(addr, '/camera/angle', azimuth, elevation)
+
+		if touch in self._touches and touch.grab_current == self:
+			if len(self._touches) == 1:
+				# here do just rotation        
+				ax, ay = self.define_rotate_angle(touch)
+				self.eye_azimuth += ax
+				self.eye_elevation += ay
+
+				if self.eye_azimuth >= np.pi:
+					self.eye_azimuth -= 2 * np.pi
+				elif self.eye_azimuth < - np.pi:
+					self.eye_azimuth += 2 * np.pi
+
+				if self.eye_elevation > np.pi / 2.0 :
+					self.eye_elevation = np.pi / 2.0
+				elif self. eye_elevation < - np.pi / 2.0:
+					self.eye_elevation = - np.pi / 2.0
+
 
 class AudioController(object):
 	def __init__(self):
