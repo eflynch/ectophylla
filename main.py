@@ -27,7 +27,16 @@ class MainWidget(BaseWidget):
 			self.cb = Callback(self.reset_gl_context)
 			kivyClock.schedule_interval(self.update_scene, 1 / 60.)
 		self._touches = []
-		
+		self.eyex = 0.
+		self.eyey = 0.
+		self.eyez = 0.
+		self.centerx = 0.
+		self.centery = 0.
+		self.centerz = -3.
+		self.upx = 0.
+		self.upy = 1.
+		self.upz = 0.
+		# self.camera_translate = [0, 0, -0.67]
 
 	def setup_gl_context(self, *args):
 		glEnable(GL_DEPTH_TEST)
@@ -37,18 +46,23 @@ class MainWidget(BaseWidget):
 
 	def update_glsl(self, *largs):
 		asp = self.width / float(self.height)
+		mat = Matrix()
+		mat = mat.look_at(self.eyex, self.eyey, self.eyez, self.centerx, self.centery, self.centerz, self.upx, self.upy, self.upz)
 		proj = Matrix().view_clip(-asp, asp, -1, 1, 1, 100, 1)
+		proj = proj.view_clip(-asp, asp, -.3, .3, 1, 100, 1)
 		self.canvas['projection_mat'] = proj
+		self.canvas['modelview_mat'] = mat
+		# mat.normal_matrix()
+
 
 	def setup_scene(self):
 		Color(1, 1, 1, 0)
 
 		PushMatrix()
 		Translate(0, 0, -5)
-		# This Kivy native Rotation is used just for
-		# enabling rotation scene like trackball
-		self.rotx = Rotate(0, 1, 0, 0)
-		self.roty = Rotate(-120, 0, 1, 0) # here just rotate scene for best view
+
+		# self.rotx = Rotate(0, 1, 0, 0)
+		# self.roty = Rotate(0, 0, 1, 0) # here just rotate scene for best view
 		self.scale = Scale(1)
 		self.trans = Translate(0,0,0)
 				
@@ -79,26 +93,26 @@ class MainWidget(BaseWidget):
 		_draw_element(sphere2)
 
 	def update_scene(self, *largs):
-		self.sphere_trans.y += .01
-		self.sphere_trans.x += .01
-		self.sphere2_trans.y += .01
-		self.sphere2_trans.x -= .01
+		# self.sphere_trans.y += .01
+		# self.sphere_trans.x += .01
+		# self.sphere2_trans.y += .01
+		# self.sphere2_trans.x -= .01
 		self.update_glsl()
 		# self.sphere
 
 	def on_key_down(self, keycode, modifiers):
-		if keycode[1] == 'up':
-			self.trans.y += .1
-		elif keycode[1] == 'down':
-			self.trans.y -= .1
-		elif keycode[1] == 'left':
-			self.trans.x += .1
-		elif keycode[1] == 'right':
-			self.trans.x -= .1
-		elif keycode[1] == 'a':
-			self.trans.z += .1
+		if keycode[1] == 'w':
+			self.eyey -= .1
 		elif keycode[1] == 's':
-			self.trans.z -= .1
+			self.eyey += .1
+		elif keycode[1] == 'a':
+			self.eyex += .1
+		elif keycode[1] == 'd':
+			self.eyex -= .1
+		elif keycode[1] == 'q':
+			self.eyez += .1
+		elif keycode[1] == 'e':
+			self.eyez -= .1
 			
 	def define_rotate_angle(self, touch):
 		x_angle = (touch.dx/self.width)*360
@@ -118,20 +132,17 @@ class MainWidget(BaseWidget):
 	def on_touch_move(self, touch):
 		self.update_glsl()
 
-		# if 'button' in touch.profile:
-			# print touch.button
-			# print "hihihi"
+
 		if touch in self._touches and touch.grab_current == self:
 			if len(self._touches) == 1:
 				# here do just rotation        
 				ax, ay = self.define_rotate_angle(touch)
-				
-				self.roty.angle += ax
-				self.rotx.angle += ay
+				self.centerx += ax
+				self.centery -= ay
+				# self.roty.angle += ax
+				# self.rotx.angle += ay
 
-			elif len(self._touches) == 2: # scaling here
-				print "POOP"
-				#use two touches to determine do we need scal
+			elif len(self._touches) == 2: 
 				touch1, touch2 = self._touches 
 				old_pos1 = (touch1.x - touch1.dx, touch1.y - touch1.dy)
 				old_pos2 = (touch2.x - touch2.dx, touch2.y - touch2.dy)
