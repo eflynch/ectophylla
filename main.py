@@ -68,8 +68,6 @@ class MainWidget(BaseWidget):
 
 		self.canvas['projection_mat'] = proj
 		self.canvas['modelview_mat'] = mat
-		# mat.normal_matrix()
-
 
 	def setup_scene(self):
 		PushMatrix()
@@ -106,7 +104,7 @@ class MainWidget(BaseWidget):
 		# self.sphere
 
 	def on_key_down(self, keycode, modifiers):
-		SPEED = 0.1
+		SPEED = 0.2
 		if keycode[1] == 'q': # up
 			self.eyey -= SPEED
 		elif keycode[1] == 'e': # down
@@ -125,19 +123,32 @@ class MainWidget(BaseWidget):
 			self.eyex -= SPEED * np.sin(self.eye_azimuth)
 
 		elif keycode[1] == 'z':
-			self.eye_azimuth += SPEED
+			self.eye_azimuth += SPEED / 4
 		elif keycode[1] == 'x':
-			self.eye_azimuth -= SPEED
+			self.eye_azimuth -= SPEED / 4
 
 		elif keycode[1] == 'v':
-			self.eye_elevation += SPEED
+			self.eye_elevation += SPEED / 4
 		elif keycode[1] == 'c':
-			self.eye_elevation -= SPEED
+			self.eye_elevation -= SPEED / 4
+
+		self.rectify_angles()
 
 	def define_rotate_angle(self, touch):
 		x_angle = - (touch.dx/self.width) * 2 * np.pi
 		y_angle = (touch.dy/self.height) * np.pi
 		return x_angle, y_angle
+
+	def rectify_angles(self):
+		if self.eye_azimuth >= np.pi:
+			self.eye_azimuth -= 2 * np.pi
+		elif self.eye_azimuth < - np.pi:
+			self.eye_azimuth += 2 * np.pi
+
+		if self.eye_elevation > np.pi / 2.0 :
+			self.eye_elevation = np.pi / 2.0
+		elif self. eye_elevation < - np.pi / 2.0:
+			self.eye_elevation = - np.pi / 2.0
 
 	def on_touch_down(self, touch):
 		# print touch.profile.
@@ -158,16 +169,8 @@ class MainWidget(BaseWidget):
 				ax, ay = self.define_rotate_angle(touch)
 				self.eye_azimuth += ax
 				self.eye_elevation += ay
-
-				if self.eye_azimuth >= np.pi:
-					self.eye_azimuth -= 2 * np.pi
-				elif self.eye_azimuth < - np.pi:
-					self.eye_azimuth += 2 * np.pi
-
-				if self.eye_elevation > np.pi / 2.0 :
-					self.eye_elevation = np.pi / 2.0
-				elif self. eye_elevation < - np.pi / 2.0:
-					self.eye_elevation = - np.pi / 2.0
+				self.rectify_angles()
+				
 
 class AudioController(object):
 	def __init__(self):
