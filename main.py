@@ -125,13 +125,13 @@ class MainWidget(BaseWidget):
 		self.eye_azimuth = azi
 		self.eye_elevation = ele
 		self.rectify_angles()
-		synth.send_camera_angle(self.eye_azimuth, self.eye_elevation)
+		synth.send_camera_angle(self.eye_azimuth * 180 / np.pi, self.eye_elevation * 180 / np.pi)
 
 	def move_camera_angle(self, dazi, dele):
 		self.eye_azimuth += dazi
 		self.eye_elevation += dele
 		self.rectify_angles()
-		synth.send_camera_angle(self.eye_azimuth, self.eye_elevation)
+		synth.send_camera_angle(self.eye_azimuth * 180 / np.pi, self.eye_elevation * 180 / np.pi)
 
 	def on_key_down(self, keycode, modifiers):
 		SPEED = 0.2

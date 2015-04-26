@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 34.0, 78.0, 1612.0, 933.0 ],
+		"rect" : [ 726.0, 271.0, 130.0, 89.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -165,10 +165,10 @@
 									"maxclass" : "newobj",
 									"numinlets" : 2,
 									"numoutlets" : 2,
-									"outlettype" : [ "int", "int" ],
-									"patching_rect" : [ 48.0, 104.0, 39.0, 22.0 ],
+									"outlettype" : [ "float", "float" ],
+									"patching_rect" : [ 48.0, 104.0, 65.0, 22.0 ],
 									"style" : "",
-									"text" : "swap"
+									"text" : "swap 0. 0."
 								}
 
 							}
@@ -1233,7 +1233,6 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-143",
