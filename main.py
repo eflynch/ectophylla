@@ -1,10 +1,9 @@
 import liblo
 import logging
 import coloredlogs
+import numpy as np
 
-from eran.core import *
-from eran.clock import *
-from eran.graphics import *
+from eran.core import BaseWidget, run
 
 from kivy.uix.label import Label
 from kivy.graphics.instructions import InstructionGroup
@@ -15,8 +14,8 @@ from kivy.clock import Clock as kivyClock
 from kivy.core.window import Window
 from kivy.resources import resource_find
 
-from rotation import SingleRotate
 from objloader import ObjFileLoader
+import synth
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level=logging.INFO)
@@ -110,37 +109,62 @@ class MainWidget(BaseWidget):
 		self.update_glsl()
 		# TODO: make the balls move
 
+	def set_camera_pos(self, x, y, z):
+		self.eyex = x
+		self.eyey = y
+		self.eyez = z
+		synth.send_camera_pos(self.eyex, self.eyey, self.eyez)
+
+	def move_camera_pos(self, dx, dy, dz):
+		self.eyex += dx
+		self.eyey += dy
+		self.eyez += dz
+		synth.send_camera_pos(self.eyex, self.eyey, self.eyez)
+
+	def set_camera_angle(self, azi, ele):
+		self.eye_azimuth = azi
+		self.eye_elevation = ele
+		self.rectify_angles()
+		synth.send_camera_angle(self.eye_azimuth, self.eye_elevation)
+
+	def move_camera_angle(self, dazi, dele):
+		self.eye_azimuth += dazi
+		self.eye_elevation += dele
+		self.rectify_angles()
+		synth.send_camera_angle(self.eye_azimuth, self.eye_elevation)
 
 	def on_key_down(self, keycode, modifiers):
 		SPEED = 0.2
+		dy = dx = dz = dazi = dele = 0
 		if keycode[1] == 'q': # up
-			self.eyey -= SPEED
+			dy = -SPEED
 		elif keycode[1] == 'e': # down
-			self.eyey += SPEED
+			dy = SPEED
 		elif keycode[1] == 'd': # left strafe
-			self.eyez += - SPEED * np.sin(self.eye_azimuth)
-			self.eyex += SPEED * np.cos(self.eye_azimuth)
+			dz = - SPEED * np.sin(self.eye_azimuth)
+			dx = SPEED * np.cos(self.eye_azimuth)
 		elif keycode[1] == 'a': # right strafe
-			self.eyez += SPEED * np.sin(self.eye_azimuth)
-			self.eyex += - SPEED * np.cos(self.eye_azimuth)
+			dz = SPEED * np.sin(self.eye_azimuth)
+			dx = - SPEED * np.cos(self.eye_azimuth)
 		elif keycode[1] == 's': # backwards
-			self.eyez += SPEED * np.cos(self.eye_azimuth)
-			self.eyex += SPEED * np.sin(self.eye_azimuth)
+			dz = SPEED * np.cos(self.eye_azimuth)
+			dx = SPEED * np.sin(self.eye_azimuth)
 		elif keycode[1] == 'w': # forwards
-			self.eyez -= SPEED * np.cos(self.eye_azimuth)
-			self.eyex -= SPEED * np.sin(self.eye_azimuth)
+			dz = - SPEED * np.cos(self.eye_azimuth)
+			dx = - SPEED * np.sin(self.eye_azimuth)
 
 		elif keycode[1] == 'z':
-			self.eye_azimuth += SPEED / 4
+			dazi = SPEED / 4
 		elif keycode[1] == 'x':
-			self.eye_azimuth -= SPEED / 4
+			dazi = - SPEED / 4
 
 		elif keycode[1] == 'v':
-			self.eye_elevation += SPEED / 4
+			dele = SPEED / 4
 		elif keycode[1] == 'c':
-			self.eye_elevation -= SPEED / 4
+			dele = - SPEED / 4
 
-		self.rectify_angles()
+		self.move_camera_angle(dazi, dele)
+		self.move_camera_pos(dx, dy, dz)
 
 	def define_rotate_angle(self, touch):
 		x_angle = - (touch.dx/self.width) * 2 * np.pi
@@ -170,33 +194,11 @@ class MainWidget(BaseWidget):
 
 	def on_touch_move(self, touch):
 		self.update_glsl()
-		self.send_camera_pos(self.eyex, self.eyey, self.eyez)
-		self.send_camera_angle(self.eye_azimuth, self.eye_elevation)
-
-	def send_note(self, pitch, velocity, duration, start_pos, end_pos, time):
-		logger.debug('Note (%s, %s, %s): %s --%s--> %s' % (pitch, velocity,
-				duration, start_pos, time, end_pos))
-		sx, sy, sz = start_pos
-		ex, ey, ez = end_pos
-		liblo.send(addr, '/note', pitch, velocity, duration,
-			   sx, sy, sz, ex, ey, ez, time)
-
-	def send_camera_pos(self, x, y, z):
-		logger.debug('Camera Pos: %s %s %s' % (x, y, z))
-		liblo.send(addr, '/camera/pos', x, y, z)
-
-	def send_camera_angle(self, azimuth, elevation):
-		logger.debug('Camera Angle: %s %s' % (azimuth, elevation))
-		liblo.send(addr, '/camera/angle', azimuth, elevation)
 
 		if touch in self._touches and touch.grab_current == self:
 			if len(self._touches) == 1:
-				# here do just rotation        
-				ax, ay = self.define_rotate_angle(touch)
-				self.eye_azimuth += ax
-				self.eye_elevation += ay
-				self.rectify_angles()
-				
+				dazi, dele = self.define_rotate_angle(touch)
+				self.move_camera_angle(dazi, dele)
 
 
 class AudioController(object):
