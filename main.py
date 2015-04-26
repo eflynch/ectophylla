@@ -1,28 +1,22 @@
-import liblo
-import logging
-import coloredlogs
 import numpy as np
 
-from eran.core import BaseWidget, run
+LOG_LEVEL = 'info'
 
-from kivy.uix.label import Label
-from kivy.graphics.instructions import InstructionGroup
-from kivy.graphics import *
+from kivy.config import Config
+Config.set('kivy', 'log_level', LOG_LEVEL)
+
+from kivy.graphics import PushMatrix, PopMatrix, RenderContext, Callback
+from kivy.graphics import UpdateNormalMatrix, Translate, Rotate, Mesh
 from kivy.graphics.transformation import Matrix
-from kivy.graphics.opengl import *
+import kivy.graphics.opengl as gl
+
 from kivy.clock import Clock as kivyClock
-from kivy.core.window import Window
 from kivy.resources import resource_find
 
+from eran.core import run, BaseWidget
 from objloader import ObjFileLoader
 import synth
 
-logger = logging.getLogger(__name__)
-coloredlogs.install(level=logging.INFO)
-
-OSC_OUT_PORT = 5555
-
-addr = liblo.Address(OSC_OUT_PORT)
 
 class MainWidget(BaseWidget):
 	def __init__(self):
@@ -48,10 +42,10 @@ class MainWidget(BaseWidget):
 
 
 	def setup_gl_context(self, *args):
-		glEnable(GL_DEPTH_TEST)
+		gl.glEnable(gl.GL_DEPTH_TEST)
 
 	def reset_gl_context(self, *args):
-		glDisable(GL_DEPTH_TEST)
+		gl.glDisable(gl.GL_DEPTH_TEST)
 
 	def get_look_at(self):
 		dx = - np.sin(self.eye_azimuth) * np.cos(self.eye_elevation)
