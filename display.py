@@ -20,7 +20,6 @@ class DisplayController(object):
         self.canvas = canvas
         self.width = width
         self.height = height
-        # self.canvas = RenderContext(compute_normal_mat=True)
         self.canvas.shader.source = resource_find('simple.glsl')
         self.scene = ObjFileLoader(resource_find("testnurbs.obj"))
         with self.canvas:
