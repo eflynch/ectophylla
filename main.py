@@ -1,3 +1,7 @@
+import liblo
+import logging
+import coloredlogs
+
 from eran.core import *
 from eran.clock import *
 from eran.graphics import *
@@ -13,6 +17,13 @@ from kivy.resources import resource_find
 
 from rotation import SingleRotate
 from objloader import ObjFileLoader
+
+logger = logging.getLogger(__name__)
+coloredlogs.install(level=logging.INFO)
+
+OSC_OUT_PORT = 5555
+
+addr = liblo.Address(OSC_OUT_PORT)
 
 class MainWidget(BaseWidget):
 	def __init__(self):
@@ -96,12 +107,9 @@ class MainWidget(BaseWidget):
 		_draw_element(sphere2)
 
 	def update_scene(self, *largs):
-		# self.sphere_trans.y += .01
-		# self.sphere_trans.x += .01
-		# self.sphere2_trans.y += .01
-		# self.sphere2_trans.x -= .01
 		self.update_glsl()
-		# self.sphere
+		# TODO: make the balls move
+
 
 	def on_key_down(self, keycode, modifiers):
 		SPEED = 0.2
@@ -162,6 +170,24 @@ class MainWidget(BaseWidget):
 
 	def on_touch_move(self, touch):
 		self.update_glsl()
+		self.send_camera_pos(self.eyex, self.eyey, self.eyez)
+		self.send_camera_angle(self.eye_azimuth, self.eye_elevation)
+
+	def send_note(self, pitch, velocity, duration, start_pos, end_pos, time):
+		logger.debug('Note (%s, %s, %s): %s --%s--> %s' % (pitch, velocity,
+				duration, start_pos, time, end_pos))
+		sx, sy, sz = start_pos
+		ex, ey, ez = end_pos
+		liblo.send(addr, '/note', pitch, velocity, duration,
+			   sx, sy, sz, ex, ey, ez, time)
+
+	def send_camera_pos(self, x, y, z):
+		logger.debug('Camera Pos: %s %s %s' % (x, y, z))
+		liblo.send(addr, '/camera/pos', x, y, z)
+
+	def send_camera_angle(self, azimuth, elevation):
+		logger.debug('Camera Angle: %s %s' % (azimuth, elevation))
+		liblo.send(addr, '/camera/angle', azimuth, elevation)
 
 		if touch in self._touches and touch.grab_current == self:
 			if len(self._touches) == 1:
@@ -171,6 +197,7 @@ class MainWidget(BaseWidget):
 				self.eye_elevation += ay
 				self.rectify_angles()
 				
+
 
 class AudioController(object):
 	def __init__(self):
