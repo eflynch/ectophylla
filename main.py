@@ -36,9 +36,6 @@ class MainWidget(BaseWidget):
 		assert(np.pi / 2 >= self.eye_azimuth >= - np.pi / 2)
 		assert(np.pi > self.eye_azimuth >= -np.pi)
 
-		self.mousex = None
-		self.mousey = None
-		# self.camera_translate = [0, 0, -0.67]
 
 	def setup_gl_context(self, *args):
 		glEnable(GL_DEPTH_TEST)
@@ -50,10 +47,6 @@ class MainWidget(BaseWidget):
 		dx = - np.sin(self.eye_azimuth) * np.cos(self.eye_elevation)
 		dy = np.sin(self.eye_elevation)
 		dz = - np.cos(self.eye_azimuth) * np.cos(self.eye_elevation)
-
-		# upx = - np.sin(self.eye_azimuth) * np.sin(self.eye_elevation)
-		# upy = np.cos(self.eye_elevation)
-		# upz = - np.cos(self.eye_azimuth) * np.sin(self.eye_elevation)
 
 		# Not sure why up has to just be up...
 		upx = 0
@@ -79,16 +72,9 @@ class MainWidget(BaseWidget):
 
 
 	def setup_scene(self):
-		Color(1, 1, 0.2, 0)
-
 		PushMatrix()
-		self.scale = Scale(1)
-		self.trans = Translate(0,0,0)
-				
 		UpdateNormalMatrix()
-		
 		self.draw_elements()
-		
 		PopMatrix()
 
 	def draw_elements(self):
@@ -104,11 +90,11 @@ class MainWidget(BaseWidget):
 			)
 		# Draw sphere in the center
 		sphere = self.scene.objects['Sphere']
-		self.sphere_trans = Translate(0, 0, -5)
+		self.sphere_trans = Translate(0, 0, -10)
 		_draw_element(sphere)
 
 		sphere2 = self.scene.objects['Sphere']
-		self.sphere2_trans = Translate(0, 0, 5)
+		self.sphere2_trans = Translate(0, 0, 10)
 		_draw_element(sphere2)
 
 	def update_scene(self, *largs):
@@ -120,38 +106,33 @@ class MainWidget(BaseWidget):
 		# self.sphere
 
 	def on_key_down(self, keycode, modifiers):
+		SPEED = 0.1
 		if keycode[1] == 'q': # up
-			self.eyey -= .1
+			self.eyey -= SPEED
 		elif keycode[1] == 'e': # down
-			self.eyey += .1
+			self.eyey += SPEED
 		elif keycode[1] == 'd': # left strafe
-			self.eyez += - 0.1 * np.sin(self.eye_azimuth)
-			self.eyex += 0.1 * np.cos(self.eye_azimuth)
+			self.eyez += - SPEED * np.sin(self.eye_azimuth)
+			self.eyex += SPEED * np.cos(self.eye_azimuth)
 		elif keycode[1] == 'a': # right strafe
-			self.eyez += 0.1 * np.sin(self.eye_azimuth)
-			self.eyex += - 0.1 * np.cos(self.eye_azimuth)
+			self.eyez += SPEED * np.sin(self.eye_azimuth)
+			self.eyex += - SPEED * np.cos(self.eye_azimuth)
 		elif keycode[1] == 's': # backwards
-			self.eyez += 0.1 * np.cos(self.eye_azimuth)
-			self.eyex += 0.1 * np.sin(self.eye_azimuth)
+			self.eyez += SPEED * np.cos(self.eye_azimuth)
+			self.eyex += SPEED * np.sin(self.eye_azimuth)
 		elif keycode[1] == 'w': # forwards
-			self.eyez -= 0.1 * np.cos(self.eye_azimuth)
-			self.eyex -= 0.1 * np.sin(self.eye_azimuth)
+			self.eyez -= SPEED * np.cos(self.eye_azimuth)
+			self.eyex -= SPEED * np.sin(self.eye_azimuth)
 
 		elif keycode[1] == 'z':
-			self.eye_azimuth += 0.1
+			self.eye_azimuth += SPEED
 		elif keycode[1] == 'x':
-			self.eye_azimuth -= 0.1
+			self.eye_azimuth -= SPEED
 
 		elif keycode[1] == 'v':
-			self.eye_elevation += 0.1
+			self.eye_elevation += SPEED
 		elif keycode[1] == 'c':
-			self.eye_elevation -= 0.1
-
-	def on_update(self):
-		PAN_SPEED = 0.005
-		dt = kivyClock.frametime
-
-		self.update_glsl()
+			self.eye_elevation -= SPEED
 
 	def define_rotate_angle(self, touch):
 		x_angle = - (touch.dx/self.width) * 2 * np.pi
