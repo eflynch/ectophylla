@@ -51,9 +51,14 @@ class MainWidget(BaseWidget):
 		dy = np.sin(self.eye_elevation)
 		dz = - np.cos(self.eye_azimuth) * np.cos(self.eye_elevation)
 
-		upx = - np.sin(self.eye_azimuth) * np.sin(self.eye_elevation)
-		upy = np.cos(self.eye_elevation)
-		upz = - np.cos(self.eye_azimuth) * np.sin(self.eye_elevation)
+		# upx = - np.sin(self.eye_azimuth) * np.sin(self.eye_elevation)
+		# upy = np.cos(self.eye_elevation)
+		# upz = - np.cos(self.eye_azimuth) * np.sin(self.eye_elevation)
+
+		# Not sure why up has to just be up...
+		upx = 0
+		upy = 1
+		upz = 0
 
 		mat = Matrix()
 		mat = mat.look_at(self.eyex, self.eyey, self.eyez,
@@ -62,26 +67,20 @@ class MainWidget(BaseWidget):
 		return mat
 
 	def update_glsl(self, *largs):
-		asp = self.height / float(self.width)
+		asp = self.width / float(self.height)
 		mat = self.get_look_at()
 
-		proj = Matrix()
-		# proj.perspective(100, 1.0, 10, 100)
 		proj = Matrix().view_clip(-asp, asp, -1, 1, 1, 100, 1)
-		proj = proj.view_clip(-asp, asp, -.3, .3, 1, 100, 1)
+
 		self.canvas['projection_mat'] = proj
 		self.canvas['modelview_mat'] = mat
 		# mat.normal_matrix()
 
 
 	def setup_scene(self):
-		Color(1, 1, 1, 0)
+		Color(1, 1, 0.2, 0)
 
 		PushMatrix()
-		Translate(0, 0, -5)
-
-		# self.rotx = Rotate(0, 1, 0, 0)
-		# self.roty = Rotate(0, 0, 1, 0) # here just rotate scene for best view
 		self.scale = Scale(1)
 		self.trans = Translate(0,0,0)
 				
@@ -104,11 +103,11 @@ class MainWidget(BaseWidget):
 			)
 		# Draw sphere in the center
 		sphere = self.scene.objects['Sphere']
-		self.sphere_trans = Translate(0, 0, 0)
+		self.sphere_trans = Translate(0, 0, -1)
 		_draw_element(sphere)
 
 		sphere2 = self.scene.objects['Sphere']
-		self.sphere2_trans = Translate(-1, -5, -1)
+		self.sphere2_trans = Translate(0, 0, 1)
 		_draw_element(sphere2)
 
 	def update_scene(self, *largs):
@@ -133,37 +132,47 @@ class MainWidget(BaseWidget):
 		elif keycode[1] == 'w':
 			self.eyez -= .1
 
+		elif keycode[1] == 'z':
+			self.eye_azimuth += 0.1
+		elif keycode[1] == 'x':
+			self.eye_azimuth -= 0.1
+
+		elif keycode[1] == 'v':
+			self.eye_elevation += 0.1
+		elif keycode[1] == 'c':
+			self.eye_elevation -= 0.1
+
 	def on_update(self):
-		PAN_SPEED = 0.01
+		PAN_SPEED = 0.005
 		dt = kivyClock.frametime
 
-		x, y = Window.mouse_pos
-		if self.mousex is not None and self.mousey is not None:
-			diffx = x - self.mousex
-			diffy = y -self.mousey
-			self.mousex = x
-			self.mousey = y
+		# x, y = Window.mouse_pos
+		# if (self.mousex is not None) and (self.mousey is not None):
+		# 	diffx = x - self.mousex
+		# 	diffy = y - self.mousey
+		# 	self.mousex = x
+		# 	self.mousey = y
 
-			dazimuth = - PAN_SPEED * diffx
-			delevation = PAN_SPEED * diffy
+		# 	dazimuth = - PAN_SPEED * diffx
+		# 	delevation = PAN_SPEED * diffy
 
-			self.eye_azimuth += dazimuth
-			self.eye_elevation += delevation
+		# 	self.eye_azimuth += dazimuth
+		# 	self.eye_elevation += delevation
 
-			if self.eye_azimuth >= np.pi:
-				self.eye_azimuth -= 2 * np.pi
-			elif self.eye_azimuth < - np.pi:
-				self.eye_azimuth += 2 * np.pi
+		# 	if self.eye_azimuth >= np.pi:
+		# 		self.eye_azimuth -= 2 * np.pi
+		# 	elif self.eye_azimuth < - np.pi:
+		# 		self.eye_azimuth += 2 * np.pi
 
-			if self.eye_elevation > np.pi / 2.0 :
-				self.eye_elevation = np.pi / 2.0
-			elif self. eye_elevation < - np.pi / 2.0:
-				self.eye_elevation = - np.pi / 2.0
+		# 	if self.eye_elevation > np.pi / 2.0 :
+		# 		self.eye_elevation = np.pi / 2.0
+		# 	elif self. eye_elevation < - np.pi / 2.0:
+		# 		self.eye_elevation = - np.pi / 2.0
+		# else:
+		# 	self.mousex = x
+		# 	self.mousey = y
 
 		print self.eye_azimuth / np.pi , self.eye_elevation / np.pi
-
-		self.mousex = x
-		self.mousey = y
 
 		self.update_glsl()
 
