@@ -19,18 +19,16 @@ from spheredisplay import Sphere
 from linedisplay import Line
 from planedisplay import Plane
 import synth
-import score_parser
 
 
 class DisplayController(object):
-    def __init__(self, width, height, canvas, conductor):
+    def __init__(self, width, height, canvas, note_data):
         super(DisplayController, self).__init__()
-        self.conductor = conductor
         self.canvas = canvas
+        self.note_data = note_data
         self.width = width
         self.height = height
         self.canvas.shader.source = resource_find('simple.glsl')
-        self.note_data = score_parser.parse('score.txt')
         self.all_spheres = []
 
         self.canvas.add(Callback(self.setup_gl_context))
@@ -46,7 +44,7 @@ class DisplayController(object):
 
     def draw_notes(self):
         for sn in self.note_data:
-            nd = NoteDisplay(sn)
+            nd = NoteDisplay(sn, [-25])
             self.canvas.add(nd)
             self.all_spheres.append(nd)
 
@@ -85,8 +83,6 @@ class DisplayController(object):
         self.canvas['projection_mat'] = proj
         self.canvas['modelview_mat'] = mat
 
-    def on_update(self):
-        now_tick = self.conductor.get_tick()
-
+    def on_update(self, now_tick):
         for s in self.all_spheres:
             s.on_update(now_tick)
