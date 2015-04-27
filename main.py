@@ -102,7 +102,6 @@ class MainWidget(BaseWidget):
             self.eye_elevation = - np.pi / 2.0
 
     def on_touch_down(self, touch):
-        # print touch.profile.
         self._touch = touch
         touch.grab(self)
         self._touches.append(touch)

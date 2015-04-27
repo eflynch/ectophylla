@@ -24,7 +24,7 @@ class DisplayController(object):
         self.height = height
         self.canvas.shader.source = resource_find('simple.glsl')
         self.scene = ObjFileLoader(resource_find("testnurbs.obj"))
-        # self.sphere_notes = []
+        self.sphere_notes = []
         with self.canvas:
             self.cb = Callback(self.setup_gl_context)
             PushMatrix()
@@ -71,6 +71,7 @@ class DisplayController(object):
         self.sphere_notes = score_parser.parse('score.txt')
 
     def draw_elements(self):
+        print "hello"
         def _draw_element(m):
             Mesh(
                 vertices=m.vertices,
@@ -79,15 +80,18 @@ class DisplayController(object):
                 mode='triangles',
             )
 
-        for sn in self.sphere_notes:
-            sphere = self.scene.objects['Sphere']
-            self.sphere_trans = Translate(0, 0, 2*sn.tick)
-            _draw_element(sphere)
-        # # Draw sphere in the center
-        # sphere = self.scene.objects['Sphere']
-        # self.sphere_trans = Translate(0, 0, -10)
-        # _draw_element(sphere)
+        # for sn in self.sphere_notes:
+        #     sphere = self.scene.objects['Sphere']
+        #     PushMatrix()
+        #     print sn.tick
+        #     sphere_trans = Translate(0, 0, 2*sn.tick)
+        #     PopMatrix()
+        #     _draw_element(sphere)
+        # Draw sphere in the center
+        sphere = self.scene.objects['Sphere']
+        self.sphere_trans = Translate(0, 0, -10)
+        _draw_element(sphere)
 
-        # sphere2 = self.scene.objects['Sphere']
-        # self.sphere2_trans = Translate(0, 0, 10)
-        # _draw_element(sphere2)
+        sphere2 = self.scene.objects['Sphere']
+        self.sphere2_trans = Translate(0, 0, 10)
+        _draw_element(sphere2)
