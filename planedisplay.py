@@ -5,7 +5,7 @@ from kivy.graphics import Mesh, InstructionGroup, Color, Translate, PushMatrix, 
 
 from objloader import ObjFileLoader
 
-nurbs = ObjFileLoader(resource_find('objects/line.obj'))
+nurbs = ObjFileLoader(resource_find('objects/plane.obj'))
 
 def make_mesh(m):
     return Mesh(
@@ -15,24 +15,26 @@ def make_mesh(m):
         mode='triangles'
     )
 
-class Line(InstructionGroup):
-    def __init__(self, x, y, color):
-        super(Line, self).__init__()
-        self.translate = Translate(x, y, 0)
-        line = nurbs.objects['line']
+class Plane(InstructionGroup):
+    def __init__(self, z, color):
+        super(Plane, self).__init__()
+
+        self.translate = Translate(0, 0, z)
+
+        plane = nurbs.objects['plane']
+
         self.add(PushMatrix())
         self.add(self.translate)
         self.add(ChangeState(
             Kd=color,
             Ka=color,
             Ks=(0.3, 0.3, 0.3),
-            Tr=1.0,
+            Tr=0.5,
             Ns=1.0,
-            intensity=0.8
+            intensity=0.5
         ))
-        self.add(make_mesh(line))
+        self.add(make_mesh(plane))
         self.add(PopMatrix())
 
-    def set_pos(self, x, y):
-        self.translate.x = x
-        self.translate.y = y
+    def set_pos(self, z):
+        self.translate.z = z

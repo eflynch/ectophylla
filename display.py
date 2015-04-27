@@ -3,7 +3,7 @@ from random import random
 import numpy as np
 
 from kivy.logger import Logger
-from kivy.graphics import PushMatrix, PopMatrix, RenderContext, Callback, Color
+from kivy.graphics import PushMatrix, PopMatrix, RenderContext, Callback, Color, ChangeState
 from kivy.graphics import UpdateNormalMatrix, Translate, Rotate, Mesh
 from kivy.graphics.transformation import Matrix
 import kivy.graphics.opengl as gl
@@ -16,6 +16,7 @@ from objloader import ObjFileLoader
 from note_sphere import NoteSphere
 from spheredisplay import Sphere
 from linedisplay import Line
+from planedisplay import Plane
 import synth
 import score_parser
 
@@ -34,9 +35,12 @@ class DisplayController(object):
         self.canvas.add(Color(1, 1, 1, 0))
         self.canvas.add(PushMatrix())
         self.canvas.add(UpdateNormalMatrix())
-
         self.draw_note_spheres()
         self.add_lines()
+        # self.sphere = Sphere((0, 0, -10), 0.1, (0.0, 1.0, 0.0))
+        self.plane = Plane(0, (0xE9/255., 0xD8/255., 0x3C/255.))
+        self.add_lines()
+        self.canvas.add(self.plane)
         self.canvas.add(PopMatrix())
         self.canvas.add(Callback(self.reset_gl_context))
 
@@ -50,7 +54,7 @@ class DisplayController(object):
     def add_lines(self):
         for x in xrange(-5, 5):
             for y in xrange(-5, 5):
-                self.canvas.add(Line(x * 3, y * 3))
+                self.canvas.add(Line(x * 3, y * 3, (0.0, 0.0, 1.0)))
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -77,12 +81,10 @@ class DisplayController(object):
         mat = self.get_look_at(x, y, z, azi, ele)
 
         proj = Matrix()
-        proj.perspective(30, asp, 1, 20)
+        proj.perspective(30, asp, 1, 100)
 
         self.canvas['projection_mat'] = proj
         self.canvas['modelview_mat'] = mat
-        self.canvas['diffuse_light'] = (1.0, 1.0, 0.0)
-        self.canvas['ambient_light'] = (0.1, 0.1, 0.1)
 
     def on_update(self):
         for s in self.all_spheres:
@@ -90,7 +92,7 @@ class DisplayController(object):
 
             # x += 0.5 * (random() - 0.5)
             # y += 0.5 * (random() - 0.5)
-            z -= 0.08
+            z += 0.08
             # * (random() - 0.5)
 
             s.set_pos((x, y, z))
