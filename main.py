@@ -13,6 +13,7 @@ from eran.clock import Clock, Conductor
 from objloader import ObjFileLoader
 from display import DisplayController
 import synth
+import score_parser
 
 
 class MainWidget(BaseWidget):
@@ -23,7 +24,8 @@ class MainWidget(BaseWidget):
         self.conductor = Conductor(clock)
 
         self.canvas = RenderContext(compute_normal_mat=True)
-        self.display = DisplayController(self.width, self.height, self.canvas, self.conductor)
+        self.note_data = score_parser.parse('score.txt')
+        self.display = DisplayController(self.width, self.height, self.canvas, self.note_data)
         self.canvas = self.display.canvas
         self._touches = []
         self.eye_x = 0.
@@ -126,7 +128,9 @@ class MainWidget(BaseWidget):
                 self.move_camera_angle(dazi, dele)
 
     def on_update(self):
-        self.display.on_update()
+        now_tick = self.conductor.get_tick()
+
+        self.display.on_update(now_tick)
 
 
 run(MainWidget)
