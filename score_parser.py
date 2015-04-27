@@ -4,7 +4,7 @@ def parse(path):
 	all_notes = []
 	score_file = open(path)
 	for line in score_file:
-		pitch, velocity, duration, time, x, y, tp = line.rstrip().split(" ")
+		pitch, velocity, duration, x, y, tp = line.rstrip().split(" ")
 		pitch = float(pitch)
 		velocity = float(velocity)
 		duration = int(duration)
