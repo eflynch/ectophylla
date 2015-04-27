@@ -15,6 +15,7 @@ from eran.core import run, BaseWidget
 from objloader import ObjFileLoader
 from note_sphere import NoteSphere
 from spheredisplay import Sphere
+from linedisplay import Line
 import synth
 import score_parser
 
@@ -33,17 +34,23 @@ class DisplayController(object):
         self.canvas.add(Color(1, 1, 1, 0))
         self.canvas.add(PushMatrix())
         self.canvas.add(UpdateNormalMatrix())
-        # self.sphere = Sphere((0, 0, -10))
-        # self.canvas.add(self.sphere)
+
         self.draw_note_spheres()
+        self.add_lines()
         self.canvas.add(PopMatrix())
         self.canvas.add(Callback(self.reset_gl_context))
 
     def draw_note_spheres(self):
         for sn in self.sphere_notes:
-            sphere = Sphere((0, 0, -3.*sn.tick))
+            z_pos = 50 - sn.tp * 60 *.1 
+            sphere = Sphere((3*sn.x, 3*sn.y, -z_pos), .3)
             self.canvas.add(sphere)
             self.all_spheres.append(sphere)
+
+    def add_lines(self):
+        for x in xrange(-5, 5):
+            for y in xrange(-5, 5):
+                self.canvas.add(Line(x * 3, y * 3))
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -65,13 +72,12 @@ class DisplayController(object):
                           upx, upy, upz)
         return mat
 
-
     def update_camera(self, x, y, z, azi, ele):
         asp = self.width / float(self.height)
         mat = self.get_look_at(x, y, z, azi, ele)
 
         proj = Matrix()
-        proj.perspective(30, asp, 1, 50)
+        proj.perspective(30, asp, 1, 20)
 
         self.canvas['projection_mat'] = proj
         self.canvas['modelview_mat'] = mat
@@ -84,7 +90,7 @@ class DisplayController(object):
 
             # x += 0.5 * (random() - 0.5)
             # y += 0.5 * (random() - 0.5)
-            z += 0.01
+            z -= 0.08
             # * (random() - 0.5)
 
             s.set_pos((x, y, z))
