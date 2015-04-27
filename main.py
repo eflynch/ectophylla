@@ -1,3 +1,4 @@
+from random import randint, random
 import numpy as np
 
 LOG_LEVEL = 'info'
@@ -12,6 +13,7 @@ from eran.core import run, BaseWidget
 from eran.clock import Clock, Conductor
 from objloader import ObjFileLoader
 from display import DisplayController
+from note import Note
 import synth
 import score_parser
 
@@ -24,8 +26,7 @@ class MainWidget(BaseWidget):
         self.conductor = Conductor(clock)
 
         self.canvas = RenderContext(compute_normal_mat=True)
-        self.note_data = score_parser.parse('score.txt')
-        self.display = DisplayController(self.width, self.height, self.canvas, self.note_data, self.on_sound)
+        self.display = DisplayController(self.width, self.height, self.canvas, self.on_sound)
         self.canvas = self.display.canvas
         self._touches = []
         self.eye_x = 0.
@@ -60,47 +61,68 @@ class MainWidget(BaseWidget):
     def move_camera_angle(self, dazi, dele):
         self.set_camera_angle(self.eye_azimuth + dazi, self.eye_elevation + dele)
 
-    def on_key_down(self, keycode, modifiers):
-        SPEED = 0.2
+    def handle_camera(self, key):
+        SPEED = 0.6
         dy = dx = dz = dazi = dele = 0
-        if keycode[1] == 'q': # up
+        if key == 'q': # up
             dy = -SPEED
-        elif keycode[1] == 'e': # down
+        elif key == 'e': # down
             dy = SPEED
-        elif keycode[1] == 'd': # left strafe
+        elif key == 'd': # left strafe
             dz = - SPEED * np.sin(self.eye_azimuth)
             dx = SPEED * np.cos(self.eye_azimuth)
-        elif keycode[1] == 'a': # right strafe
+        elif key == 'a': # right strafe
             dz = SPEED * np.sin(self.eye_azimuth)
             dx = - SPEED * np.cos(self.eye_azimuth)
-        elif keycode[1] == 's': # backwards
+        elif key == 's': # backwards
             dz = SPEED * np.cos(self.eye_azimuth)
             dx = SPEED * np.sin(self.eye_azimuth)
-        elif keycode[1] == 'w': # forwards
+        elif key == 'w': # forwards
             dz = - SPEED * np.cos(self.eye_azimuth)
             dx = - SPEED * np.sin(self.eye_azimuth)
 
-        elif keycode[1] == 'z':
+        elif key == 'z':
             dazi = SPEED / 4
-        elif keycode[1] == 'x':
+        elif key == 'x':
             dazi = - SPEED / 4
 
-        elif keycode[1] == 'v':
+        elif key == 'v':
             dele = SPEED / 4
-        elif keycode[1] == 'c':
+        elif key == 'c':
             dele = - SPEED / 4
-
-        if keycode[1] == 'p':
-            self.conductor.clock.toggle()
-
-        if keycode[1] == 'l':
-            self.conductor.set_bpm(self.conductor.bpm * 1.05)
-
-        if keycode[1] == 'k':
-            self.conductor.set_bpm(self.conductor.bpm * 0.95)
 
         self.move_camera_angle(dazi, dele)
         self.move_camera_pos(dx, dy, dz)
+
+    def on_key_down(self, keycode, modifiers):
+
+        if keycode[1] in 'wasdqezxcv':
+            self.handle_camera(keycode[1])
+
+        elif keycode[1] == 'p':
+            self.conductor.clock.toggle()
+
+        elif keycode[1] == 'o':
+            self.conductor.set_bpm(self.conductor.bpm * 1.05)
+
+        elif keycode[1] == 'i':
+            self.conductor.set_bpm(self.conductor.bpm * 0.95)
+
+        elif keycode[1] == 'r':
+            note_data = score_parser.parse('score.txt')
+            self.display.add_notes(note_data)
+
+        elif keycode[1] == 'spacebar':
+            now_tick = self.conductor.get_tick()
+            notes = []
+            for i in xrange(10):
+                n = Note(randint(48, 70), 0.4, 480, randint(-5, 5),
+                         randint(-5, 5), now_tick + randint(0, 480*10), 0.01 * random())
+                notes.append(n)
+
+            self.display.add_notes(notes)
+
+        
 
     def define_rotate_angle(self, touch):
         x_angle = - (touch.dx/self.width) * 2 * np.pi

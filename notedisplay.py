@@ -1,3 +1,5 @@
+from random import random
+
 import numpy as np
 
 from kivy.graphics import InstructionGroup
@@ -9,7 +11,7 @@ class NoteDisplay(InstructionGroup):
     def __init__(self, note_data, planes, on_sound):
         super(NoteDisplay, self).__init__()
         self.note = note_data
-        self.planes = planes
+        self.planes = sorted(planes)
         self.on_sound = on_sound
         self.sound_count = 0
 
@@ -29,4 +31,7 @@ class NoteDisplay(InstructionGroup):
         if self.sound_count < len(self.planes):
             if z > self.planes[self.sound_count]:
                 self.on_sound(self.note, (x, y, z))
+                self.sphere.set_color((random(), random(), random()))
                 self.sound_count += 1
+
+        return z < 220
