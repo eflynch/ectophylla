@@ -14,6 +14,7 @@ from kivy.resources import resource_find
 from eran.core import run, BaseWidget
 from objloader import ObjFileLoader
 from spheredisplay import Sphere
+from linedisplay import Line
 import synth
 
 
@@ -29,10 +30,17 @@ class DisplayController(object):
         self.canvas.add(Color(1, 1, 1, 0))
         self.canvas.add(PushMatrix())
         self.canvas.add(UpdateNormalMatrix())
-        self.sphere = Sphere((0, 0, -10))
+        self.sphere = Sphere((0, 0, -10), 0.1)
+        self.add_lines()
         self.canvas.add(self.sphere)
         self.canvas.add(PopMatrix())
         self.canvas.add(Callback(self.reset_gl_context))
+
+    def add_lines(self):
+        for x in xrange(-5, 5):
+            for y in xrange(-5, 5):
+                self.canvas.add(Line(x * 3, y * 3))
+
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -59,7 +67,7 @@ class DisplayController(object):
         mat = self.get_look_at(x, y, z, azi, ele)
 
         proj = Matrix()
-        proj.perspective(30, asp, 1, 50)
+        proj.perspective(30, asp, 1, 20)
 
         self.canvas['projection_mat'] = proj
         self.canvas['modelview_mat'] = mat
