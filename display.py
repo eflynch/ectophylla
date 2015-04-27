@@ -1,7 +1,9 @@
+from random import random
+
 import numpy as np
 
 from kivy.logger import Logger
-from kivy.graphics import PushMatrix, PopMatrix, RenderContext, Callback
+from kivy.graphics import PushMatrix, PopMatrix, RenderContext, Callback, Color
 from kivy.graphics import UpdateNormalMatrix, Translate, Rotate, Mesh
 from kivy.graphics.transformation import Matrix
 import kivy.graphics.opengl as gl
@@ -11,6 +13,7 @@ from kivy.resources import resource_find
 
 from eran.core import run, BaseWidget
 from objloader import ObjFileLoader
+from spheredisplay import Sphere
 import synth
 
 
@@ -21,12 +24,15 @@ class DisplayController(object):
         self.width = width
         self.height = height
         self.canvas.shader.source = resource_find('simple.glsl')
-        self.scene = ObjFileLoader(resource_find("testnurbs.obj"))
-        with self.canvas:
-            self.cb = Callback(self.setup_gl_context)
-            PushMatrix()
-            self.setup_scene()
-            PopMatrix()
+
+        self.canvas.add(Callback(self.setup_gl_context))
+        self.canvas.add(Color(1, 1, 1, 0))
+        self.canvas.add(PushMatrix())
+        self.canvas.add(UpdateNormalMatrix())
+        self.sphere = Sphere((0, 0, -10))
+        self.canvas.add(self.sphere)
+        self.canvas.add(PopMatrix())
+        self.canvas.add(Callback(self.reset_gl_context))
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -40,9 +46,7 @@ class DisplayController(object):
         dz = - np.cos(azi) * np.cos(ele)
 
         # Not sure why up has to just be up...
-        upx = 0
-        upy = 1
-        upz = 0
+        upx, upy, upz = (0, 1, 0)
 
         mat = Matrix()
         mat = mat.look_at(x, y, z,
@@ -59,29 +63,17 @@ class DisplayController(object):
 
         self.canvas['projection_mat'] = proj
         self.canvas['modelview_mat'] = mat
+        self.canvas['diffuse_light'] = (1.0, 1.0, 0.0)
+        self.canvas['ambient_light'] = (0.1, 0.1, 0.1)
 
-    def setup_scene(self):
-        PushMatrix()
-        UpdateNormalMatrix()
-        self.draw_elements()
-        PopMatrix()
+    def on_update(self):
+        return 
+        x, y, z = self.sphere.translate.xyz
 
-    def draw_elements(self):
-        """ Draw separately all objects on the scene
-            to setup separate rotation for each object
-        """
-        def _draw_element(m):
-            Mesh(
-                vertices=m.vertices,
-                indices=m.indices,
-                fmt=m.vertex_format,
-                mode='triangles',
-            )
-        # Draw sphere in the center
-        sphere = self.scene.objects['Sphere']
-        self.sphere_trans = Translate(0, 0, -10)
-        _draw_element(sphere)
+        x += 0.5 * (random() - 0.5)
+        y += 0.5 * (random() - 0.5)
+        z += 0.5 * (random() - 0.5)
 
-        sphere2 = self.scene.objects['Sphere']
-        self.sphere2_trans = Translate(0, 0, 10)
-        _draw_element(sphere2)
+        self.sphere.set_pos((x, y, z))
+
+

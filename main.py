@@ -26,6 +26,7 @@ class MainWidget(BaseWidget):
         self.eye_z = 0.
         self.eye_azimuth = 0.
         self.eye_elevation = 0.
+        self.update_camera()
 
     def update_camera(self):
         self.display.update_camera(self.eye_x, self.eye_y, self.eye_z,
@@ -116,6 +117,9 @@ class MainWidget(BaseWidget):
             if len(self._touches) == 1:
                 dazi, dele = self.define_rotate_angle(touch)
                 self.move_camera_angle(dazi, dele)
+
+    def on_update(self):
+        self.display.on_update()
 
 
 run(MainWidget)
