@@ -11,7 +11,9 @@ from kivy.resources import resource_find
 
 from eran.core import run, BaseWidget
 from objloader import ObjFileLoader
+from note_sphere import NoteSphere
 import synth
+import score_parser
 
 
 class DisplayController(object):
@@ -22,6 +24,7 @@ class DisplayController(object):
         self.height = height
         self.canvas.shader.source = resource_find('simple.glsl')
         self.scene = ObjFileLoader(resource_find("testnurbs.obj"))
+        # self.sphere_notes = []
         with self.canvas:
             self.cb = Callback(self.setup_gl_context)
             PushMatrix()
@@ -65,11 +68,9 @@ class DisplayController(object):
         UpdateNormalMatrix()
         self.draw_elements()
         PopMatrix()
+        self.sphere_notes = score_parser.parse('score.txt')
 
     def draw_elements(self):
-        """ Draw separately all objects on the scene
-            to setup separate rotation for each object
-        """
         def _draw_element(m):
             Mesh(
                 vertices=m.vertices,
@@ -77,11 +78,16 @@ class DisplayController(object):
                 fmt=m.vertex_format,
                 mode='triangles',
             )
-        # Draw sphere in the center
-        sphere = self.scene.objects['Sphere']
-        self.sphere_trans = Translate(0, 0, -10)
-        _draw_element(sphere)
 
-        sphere2 = self.scene.objects['Sphere']
-        self.sphere2_trans = Translate(0, 0, 10)
-        _draw_element(sphere2)
+        for sn in self.sphere_notes:
+            sphere = self.scene.objects['Sphere']
+            self.sphere_trans = Translate(0, 0, 2*sn.tick)
+            _draw_element(sphere)
+        # # Draw sphere in the center
+        # sphere = self.scene.objects['Sphere']
+        # self.sphere_trans = Translate(0, 0, -10)
+        # _draw_element(sphere)
+
+        # sphere2 = self.scene.objects['Sphere']
+        # self.sphere2_trans = Translate(0, 0, 10)
+        # _draw_element(sphere2)
