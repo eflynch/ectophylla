@@ -6,6 +6,7 @@ from kivy.graphics import InstructionGroup
 
 from spheredisplay import Sphere
 import synth
+from config import config
 
 class NoteDisplay(InstructionGroup):
     def __init__(self, note_data, planes, on_sound):
@@ -20,8 +21,8 @@ class NoteDisplay(InstructionGroup):
 
     def compute_pos(self, now_tick=0):
         z = self.planes[0] - (self.note.tp - now_tick) * self.note.speed
-        x = 3 * self.note.x
-        y = 3 * self.note.y
+        x = config['LINE_SPACING'] * self.note.x
+        y = config['LINE_SPACING'] * self.note.y
         return (x, y, z)
 
     def on_update(self, now_tick):

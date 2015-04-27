@@ -4,7 +4,7 @@ import numpy as np
 
 from kivy.logger import Logger
 from kivy.graphics import PushMatrix, PopMatrix, RenderContext, Callback, Color, ChangeState
-from kivy.graphics import UpdateNormalMatrix, Translate, Rotate, Mesh, InstructionGroup
+from kivy.graphics import UpdateNormalMatrix, Translate, Rotate, Mesh, InstructionGroup, Scale
 from kivy.graphics.transformation import Matrix
 import kivy.graphics.opengl as gl
 
@@ -19,6 +19,7 @@ from spheredisplay import Sphere
 from linedisplay import Line
 from planedisplay import Plane
 import synth
+from config import config
 
 
 class DisplayController(object):
@@ -31,7 +32,7 @@ class DisplayController(object):
         self.canvas.shader.source = resource_find('simple.glsl')
 
         self.notes = []
-        self.planes = range(-200, 200, 40)
+        self.planes = range(-10 * config['PLANE_SPACING'], 10 * config['PLANE_SPACING'], config['PLANE_SPACING'])
 
         self.note_displays = InstructionGroup()
         self.plane_displays = InstructionGroup()
@@ -42,7 +43,6 @@ class DisplayController(object):
         self.fixed_z = Translate(0, 0, 0)
 
         self.canvas.add(Callback(self.setup_gl_context))
-        self.canvas.add(Color(1, 1, 1, 0))
         self.canvas.add(PushMatrix())
         self.canvas.add(UpdateNormalMatrix())
 
@@ -74,9 +74,10 @@ class DisplayController(object):
             self.plane_displays.add(Plane(p, (0xE9/255., 0xD8/255., 0x3C/255.)))
 
     def draw_lines(self):
+        s = config['LINE_SPACING']
         for x in xrange(-5, 5):
             for y in xrange(-5, 5):
-                self.line_displays.add(Line(x * 3, y * 3, (0.0, 0.0, 1.0)))
+                self.line_displays.add(Line(x * s, y * s, (0.0, 0.0, 1.0)))
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)

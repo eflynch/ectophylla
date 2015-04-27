@@ -16,6 +16,7 @@ from display import DisplayController
 from note import Note
 import synth
 import score_parser
+from config import config
 
 
 class MainWidget(BaseWidget):
@@ -62,7 +63,7 @@ class MainWidget(BaseWidget):
         self.set_camera_angle(self.eye_azimuth + dazi, self.eye_elevation + dele)
 
     def handle_camera(self, key):
-        SPEED = 0.6
+        SPEED = 2.0
         dy = dx = dz = dazi = dele = 0
         if key == 'q': # up
             dy = -SPEED
@@ -80,12 +81,10 @@ class MainWidget(BaseWidget):
         elif key == 'w': # forwards
             dz = - SPEED * np.cos(self.eye_azimuth)
             dx = - SPEED * np.sin(self.eye_azimuth)
-
         elif key == 'z':
             dazi = SPEED / 4
         elif key == 'x':
             dazi = - SPEED / 4
-
         elif key == 'v':
             dele = SPEED / 4
         elif key == 'c':
@@ -114,10 +113,12 @@ class MainWidget(BaseWidget):
 
         elif keycode[1] == 'spacebar':
             now_tick = self.conductor.get_tick()
+            x = randint(-5, 5)
+            y = randint(-5, 5)
             notes = []
             for i in xrange(10):
-                n = Note(randint(48, 70), 0.4, 480, randint(-5, 5),
-                         randint(-5, 5), now_tick + randint(0, 480*10), 0.01 * random())
+                n = Note(randint(48, 70), 1.0, 480 * randint(1, 5), x,
+                         y, now_tick + randint(0, 480*20), 0.01 * random())
                 notes.append(n)
 
             self.display.add_notes(notes)
