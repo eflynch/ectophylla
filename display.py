@@ -44,7 +44,7 @@ class DisplayController(object):
 
     def draw_notes(self):
         for sn in self.note_data:
-            nd = NoteDisplay(sn)
+            nd = NoteDisplay(sn, [-25])
             self.canvas.add(nd)
             self.all_spheres.append(nd)
 

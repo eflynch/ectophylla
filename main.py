@@ -129,7 +129,6 @@ class MainWidget(BaseWidget):
 
     def on_update(self):
         now_tick = self.conductor.get_tick()
-
         self.display.on_update(now_tick)
 
 

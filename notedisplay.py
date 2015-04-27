@@ -3,6 +3,7 @@ import numpy as np
 from kivy.graphics import InstructionGroup
 
 from spheredisplay import Sphere
+import synth
 
 class NoteDisplay(InstructionGroup):
     def __init__(self, note_data, planes):
@@ -30,8 +31,15 @@ class NoteDisplay(InstructionGroup):
 
         if self.sound_count < len(self.planes):
             if z > self.planes[self.sound_count]:
-                self.sound()
+                self.sound((x, y, z))
                 self.sound_count += 1
 
-    def sound(self):
-        print 'Sounding'
+    def sound(self, pos):
+        x, y, z = pos
+        duration = self.note.duration * 600 / (48 * 8)
+        start_pos = (x, y, z)
+        end_pos = (x, y, z + (self.speed * self.note.duration) * 2)
+        time = duration * 2
+
+        synth.send_note(self.note.pitch, self.note.velocity, duration,
+                        start_pos, end_pos, time)
