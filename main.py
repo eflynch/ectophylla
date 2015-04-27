@@ -25,7 +25,7 @@ class MainWidget(BaseWidget):
 
         self.canvas = RenderContext(compute_normal_mat=True)
         self.note_data = score_parser.parse('score.txt')
-        self.display = DisplayController(self.width, self.height, self.canvas, self.note_data)
+        self.display = DisplayController(self.width, self.height, self.canvas, self.note_data, self.on_sound)
         self.canvas = self.display.canvas
         self._touches = []
         self.eye_x = 0.
@@ -93,6 +93,12 @@ class MainWidget(BaseWidget):
         if keycode[1] == 'p':
             self.conductor.clock.toggle()
 
+        if keycode[1] == 'l':
+            self.conductor.set_bpm(self.conductor.bpm * 1.05)
+
+        if keycode[1] == 'k':
+            self.conductor.set_bpm(self.conductor.bpm * 0.95)
+
         self.move_camera_angle(dazi, dele)
         self.move_camera_pos(dx, dy, dz)
 
@@ -130,6 +136,16 @@ class MainWidget(BaseWidget):
     def on_update(self):
         now_tick = self.conductor.get_tick()
         self.display.on_update(now_tick)
+
+    def on_sound(self, note, pos):
+        x, y, z = pos
+        duration = note.duration * 60000 / (480 * self.conductor.bpm)
+        start_pos = (x, y, z)
+        end_pos = (x, y, z + (note.speed * note.duration) * 2)
+        time = duration * 2
+
+        synth.send_note(note.pitch, note.velocity, duration,
+                        start_pos, end_pos, time)
 
 
 run(MainWidget)

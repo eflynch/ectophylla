@@ -6,21 +6,18 @@ from spheredisplay import Sphere
 import synth
 
 class NoteDisplay(InstructionGroup):
-    def __init__(self, note_data, planes):
+    def __init__(self, note_data, planes, on_sound):
         super(NoteDisplay, self).__init__()
         self.note = note_data
         self.planes = planes
+        self.on_sound = on_sound
         self.sound_count = 0
-
-        units_per_minute = 0.08 * 3600
-        ticks_per_minute = 80 * 480
-        self.speed = units_per_minute / ticks_per_minute
 
         self.sphere = Sphere(self.compute_pos(), 0.3)
         self.add(self.sphere)
 
     def compute_pos(self, now_tick=0):
-        z = self.planes[0] - (self.note.tp - now_tick) * self.speed
+        z = self.planes[0] - (self.note.tp - now_tick) * self.note.speed
         x = 3 * self.note.x
         y = 3 * self.note.y
         return (x, y, z)
@@ -31,15 +28,5 @@ class NoteDisplay(InstructionGroup):
 
         if self.sound_count < len(self.planes):
             if z > self.planes[self.sound_count]:
-                self.sound((x, y, z))
+                self.on_sound(self.note, (x, y, z))
                 self.sound_count += 1
-
-    def sound(self, pos):
-        x, y, z = pos
-        duration = self.note.duration * 600 / (48 * 8)
-        start_pos = (x, y, z)
-        end_pos = (x, y, z + (self.speed * self.note.duration) * 2)
-        time = duration * 2
-
-        synth.send_note(self.note.pitch, self.note.velocity, duration,
-                        start_pos, end_pos, time)

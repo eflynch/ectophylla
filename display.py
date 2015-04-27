@@ -22,10 +22,11 @@ import synth
 
 
 class DisplayController(object):
-    def __init__(self, width, height, canvas, note_data):
+    def __init__(self, width, height, canvas, note_data, on_sound):
         super(DisplayController, self).__init__()
         self.canvas = canvas
         self.note_data = note_data
+        self.on_sound = on_sound
         self.width = width
         self.height = height
         self.canvas.shader.source = resource_find('simple.glsl')
@@ -44,7 +45,7 @@ class DisplayController(object):
 
     def draw_notes(self):
         for sn in self.note_data:
-            nd = NoteDisplay(sn, [-25])
+            nd = NoteDisplay(sn, [-25], self.on_sound)
             self.canvas.add(nd)
             self.all_spheres.append(nd)
 
