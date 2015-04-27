@@ -7,7 +7,7 @@ def parse(path):
 	for line in score_file:
 		print line.split(" ")
 		# import pdb; pdb.set_trace()
-		pitch, velocity, duration, start_pos, end_pos, time, tick = line.split(" ")
+		pitch, velocity, duration, start_pos, end_pos, time, tick = line.rstrip().split(" ")
 		pitch = float(pitch)
 		velocity = float(velocity)
 		duration = int(duration)
@@ -15,6 +15,6 @@ def parse(path):
 		end_pos = tuple(end_pos)
 		time = tuple(time)
 		new_tick = float(tick)
-		all_notes.append(NoteSphere(pitch, velocity, duration, start_pos, end_pos, time, tick))
 		global_tick += new_tick
+		all_notes.append(NoteSphere(pitch, velocity, duration, start_pos, end_pos, time, global_tick))
 	return all_notes

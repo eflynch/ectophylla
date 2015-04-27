@@ -26,15 +26,24 @@ class DisplayController(object):
         self.width = width
         self.height = height
         self.canvas.shader.source = resource_find('simple.glsl')
+        self.sphere_notes = score_parser.parse('score.txt')
+        self.all_spheres = []
 
         self.canvas.add(Callback(self.setup_gl_context))
         self.canvas.add(Color(1, 1, 1, 0))
         self.canvas.add(PushMatrix())
         self.canvas.add(UpdateNormalMatrix())
-        self.sphere = Sphere((0, 0, -10))
-        self.canvas.add(self.sphere)
+        # self.sphere = Sphere((0, 0, -10))
+        # self.canvas.add(self.sphere)
+        self.draw_note_spheres()
         self.canvas.add(PopMatrix())
         self.canvas.add(Callback(self.reset_gl_context))
+
+    def draw_note_spheres(self):
+        for sn in self.sphere_notes:
+            sphere = Sphere((0, 0, -3.*sn.tick))
+            self.canvas.add(sphere)
+            self.all_spheres.append(sphere)
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -56,6 +65,7 @@ class DisplayController(object):
                           upx, upy, upz)
         return mat
 
+
     def update_camera(self, x, y, z, azi, ele):
         asp = self.width / float(self.height)
         mat = self.get_look_at(x, y, z, azi, ele)
@@ -69,44 +79,12 @@ class DisplayController(object):
         self.canvas['ambient_light'] = (0.1, 0.1, 0.1)
 
     def on_update(self):
-        return 
-        x, y, z = self.sphere.translate.xyz
+        for s in self.all_spheres:
+            x, y, z = s.translate.xyz
 
-        x += 0.5 * (random() - 0.5)
-        y += 0.5 * (random() - 0.5)
-        z += 0.5 * (random() - 0.5)
+            # x += 0.5 * (random() - 0.5)
+            # y += 0.5 * (random() - 0.5)
+            z += 0.01
+            # * (random() - 0.5)
 
-        self.sphere.set_pos((x, y, z))
-
-    def setup_scene(self):
-        PushMatrix()
-        UpdateNormalMatrix()
-        self.draw_elements()
-        PopMatrix()
-        self.sphere_notes = score_parser.parse('score.txt')
-
-    def draw_elements(self):
-        print "hello"
-        def _draw_element(m):
-            Mesh(
-                vertices=m.vertices,
-                indices=m.indices,
-                fmt=m.vertex_format,
-                mode='triangles',
-            )
-
-        # for sn in self.sphere_notes:
-        #     sphere = self.scene.objects['Sphere']
-        #     PushMatrix()
-        #     print sn.tick
-        #     sphere_trans = Translate(0, 0, 2*sn.tick)
-        #     PopMatrix()
-        #     _draw_element(sphere)
-        # Draw sphere in the center
-        sphere = self.scene.objects['Sphere']
-        self.sphere_trans = Translate(0, 0, -10)
-        _draw_element(sphere)
-
-        sphere2 = self.scene.objects['Sphere']
-        self.sphere2_trans = Translate(0, 0, 10)
-        _draw_element(sphere2)
+            s.set_pos((x, y, z))
