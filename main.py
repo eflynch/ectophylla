@@ -9,6 +9,7 @@ from kivy.clock import Clock as kivyClock
 from kivy.resources import resource_find
 
 from eran.core import run, BaseWidget
+from eran.clock import Clock, Conductor
 from objloader import ObjFileLoader
 from display import DisplayController
 import synth
@@ -17,8 +18,12 @@ import synth
 class MainWidget(BaseWidget):
     def __init__(self):
         super(MainWidget, self).__init__()
+
+        clock = Clock()
+        self.conductor = Conductor(clock)
+
         self.canvas = RenderContext(compute_normal_mat=True)
-        self.display = DisplayController(self.width, self.height, self.canvas)
+        self.display = DisplayController(self.width, self.height, self.canvas, self.conductor)
         self.canvas = self.display.canvas
         self._touches = []
         self.eye_x = 0.
@@ -82,6 +87,9 @@ class MainWidget(BaseWidget):
             dele = SPEED / 4
         elif keycode[1] == 'c':
             dele = - SPEED / 4
+
+        if keycode[1] == 'p':
+            self.conductor.clock.toggle()
 
         self.move_camera_angle(dazi, dele)
         self.move_camera_pos(dx, dy, dz)

@@ -1,4 +1,4 @@
-class NoteSphere(object):
+class Note(object):
 	def __init__(self, pitch, velocity, duration, start_pos, end_pos, time, x, y, tp, tick):
 		self.pitch = pitch
 		self.velocity = velocity
@@ -10,4 +10,3 @@ class NoteSphere(object):
 		self.y = y
 		self.tp = tp
 		self.tick = tick
-

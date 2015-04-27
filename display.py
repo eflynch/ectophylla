@@ -13,7 +13,8 @@ from kivy.resources import resource_find
 
 from eran.core import run, BaseWidget
 from objloader import ObjFileLoader
-from note_sphere import NoteSphere
+from note import Note
+from notedisplay import NoteDisplay
 from spheredisplay import Sphere
 from linedisplay import Line
 from planedisplay import Plane
@@ -22,34 +23,32 @@ import score_parser
 
 
 class DisplayController(object):
-    def __init__(self, width, height, canvas):
+    def __init__(self, width, height, canvas, conductor):
         super(DisplayController, self).__init__()
+        self.conductor = conductor
         self.canvas = canvas
         self.width = width
         self.height = height
         self.canvas.shader.source = resource_find('simple.glsl')
-        self.sphere_notes = score_parser.parse('score.txt')
+        self.note_data = score_parser.parse('score.txt')
         self.all_spheres = []
 
         self.canvas.add(Callback(self.setup_gl_context))
         self.canvas.add(Color(1, 1, 1, 0))
         self.canvas.add(PushMatrix())
         self.canvas.add(UpdateNormalMatrix())
-        self.draw_note_spheres()
+        self.draw_notes()
         self.add_lines()
-        # self.sphere = Sphere((0, 0, -10), 0.1, (0.0, 1.0, 0.0))
-        self.plane = Plane(0, (0xE9/255., 0xD8/255., 0x3C/255.))
-        self.add_lines()
+        self.plane = Plane(-25, (0xE9/255., 0xD8/255., 0x3C/255.))
         self.canvas.add(self.plane)
         self.canvas.add(PopMatrix())
         self.canvas.add(Callback(self.reset_gl_context))
 
-    def draw_note_spheres(self):
-        for sn in self.sphere_notes:
-            z_pos = 50 - sn.tp * 60 *.1 
-            sphere = Sphere((3*sn.x, 3*sn.y, -z_pos), .3)
-            self.canvas.add(sphere)
-            self.all_spheres.append(sphere)
+    def draw_notes(self):
+        for sn in self.note_data:
+            nd = NoteDisplay(sn)
+            self.canvas.add(nd)
+            self.all_spheres.append(nd)
 
     def add_lines(self):
         for x in xrange(-5, 5):
@@ -87,12 +86,7 @@ class DisplayController(object):
         self.canvas['modelview_mat'] = mat
 
     def on_update(self):
+        now_tick = self.conductor.get_tick()
+
         for s in self.all_spheres:
-            x, y, z = s.translate.xyz
-
-            # x += 0.5 * (random() - 0.5)
-            # y += 0.5 * (random() - 0.5)
-            z += 0.08
-            # * (random() - 0.5)
-
-            s.set_pos((x, y, z))
+            s.on_update(now_tick)

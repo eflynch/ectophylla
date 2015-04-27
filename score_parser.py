@@ -1,4 +1,4 @@
-from note_sphere import NoteSphere
+from note import Note
 
 def parse(path):
 	all_notes = []
@@ -19,5 +19,5 @@ def parse(path):
 		tp = float(tp)
 		new_tick = float(tick)
 		global_tick += new_tick
-		all_notes.append(NoteSphere(pitch, velocity, duration, start_pos, end_pos, time, x, y, tp, global_tick))
+		all_notes.append(Note(pitch, velocity, duration, start_pos, end_pos, time, x, y, tp, global_tick))
 	return all_notes
