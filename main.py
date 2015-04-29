@@ -25,62 +25,57 @@ class MainWidget(BaseWidget):
 
         clock = Clock()
         self.conductor = Conductor(clock)
+        self.eye_pos = (0., 0., 0.)
+        self.eye_angle = (0., 0.)
 
         self.canvas = RenderContext(compute_normal_mat=True)
-        self.display = DisplayController(self.width, self.height, self.canvas, self.on_sound)
+        self.display = DisplayController(self.width, self.height, self.canvas,
+                                         self.on_sound, self.eye_pos, self.eye_angle)
         self.canvas = self.display.canvas
         self._touches = []
-        self.eye_x = 0.
-        self.eye_y = 0.
-        self.eye_z = 0.
-        self.eye_azimuth = 0.
-        self.eye_elevation = 0.
         self.update_camera()
 
     def update_camera(self):
-        self.display.update_camera(self.eye_x, self.eye_y, self.eye_z,
-                                   self.eye_azimuth, self.eye_elevation)
+        self.display.update_camera(self.eye_pos, self.eye_angle)
 
-    def set_camera_pos(self, x, y, z):
-        self.eye_x = x
-        self.eye_y = y
-        self.eye_z = z
+    def set_camera_pos(self, pos):
+        self.eye_pos = pos
         self.update_camera()
-        synth.send_camera_pos(self.eye_x, self.eye_y, self.eye_z)
+        synth.send_camera_pos(*self.eye_pos)
 
     def move_camera_pos(self, dx, dy, dz):
-        self.set_camera_pos(self.eye_x + dx, self.eye_y + dy, self.eye_z + dz)
+        x, y, z = self.eye_pos
+        self.set_camera_pos((x + dx, y + dy, z + dz))
 
-    def set_camera_angle(self, azi, ele):
-        self.eye_azimuth = azi
-        self.eye_elevation = ele
-        self.rectify_angles()
+    def set_camera_angle(self, angle):
+        self.eye_angle = angle
+        self.rectify_angle()
         self.update_camera()
-        synth.send_camera_angle(self.eye_azimuth * 180 / np.pi,
-                                self.eye_elevation * 180 / np.pi)
+        synth.send_camera_angle(self.eye_angle[0] * 180 / np.pi,
+                                self.eye_angle[1] * 180 / np.pi)
 
     def move_camera_angle(self, dazi, dele):
-        self.set_camera_angle(self.eye_azimuth + dazi, self.eye_elevation + dele)
+        self.set_camera_angle((self.eye_angle[0] + dazi, self.eye_angle[1] + dele))
 
     def handle_camera(self, key):
-        SPEED = 2.0
+        SPEED = 1.0
         dy = dx = dz = dazi = dele = 0
         if key == 'q': # up
             dy = -SPEED
         elif key == 'e': # down
             dy = SPEED
         elif key == 'd': # left strafe
-            dz = - SPEED * np.sin(self.eye_azimuth)
-            dx = SPEED * np.cos(self.eye_azimuth)
+            dz = - SPEED * np.sin(self.eye_angle[0])
+            dx = SPEED * np.cos(self.eye_angle[0])
         elif key == 'a': # right strafe
-            dz = SPEED * np.sin(self.eye_azimuth)
-            dx = - SPEED * np.cos(self.eye_azimuth)
+            dz = SPEED * np.sin(self.eye_angle[0])
+            dx = - SPEED * np.cos(self.eye_angle[0])
         elif key == 's': # backwards
-            dz = SPEED * np.cos(self.eye_azimuth)
-            dx = SPEED * np.sin(self.eye_azimuth)
+            dz = SPEED * np.cos(self.eye_angle[0])
+            dx = SPEED * np.sin(self.eye_angle[0])
         elif key == 'w': # forwards
-            dz = - SPEED * np.cos(self.eye_azimuth)
-            dx = - SPEED * np.sin(self.eye_azimuth)
+            dz = - SPEED * np.cos(self.eye_angle[0])
+            dx = - SPEED * np.sin(self.eye_angle[0])
         elif key == 'z':
             dazi = SPEED / 4
         elif key == 'x':
@@ -130,16 +125,19 @@ class MainWidget(BaseWidget):
         y_angle = (touch.dy/self.height) * np.pi
         return x_angle, y_angle
 
-    def rectify_angles(self):
-        if self.eye_azimuth >= np.pi:
-            self.eye_azimuth -= 2 * np.pi
-        elif self.eye_azimuth < - np.pi:
-            self.eye_azimuth += 2 * np.pi
+    def rectify_angle(self):
+        t, p = self.eye_angle
+        if t >= np.pi:
+            t -= 2 * np.pi
+        elif t < - np.pi:
+            t += 2 * np.pi
 
-        if self.eye_elevation > np.pi / 2.0 :
-            self.eye_elevation = np.pi / 2.0
-        elif self. eye_elevation < - np.pi / 2.0:
-            self.eye_elevation = - np.pi / 2.0
+        if p > np.pi / 2.0 :
+            p = np.pi / 2.0
+        elif p < - np.pi / 2.0:
+            p = - np.pi / 2.0
+
+        self.eye_angle = (t, p)
 
     def on_touch_down(self, touch):
         self._touch = touch
@@ -164,7 +162,8 @@ class MainWidget(BaseWidget):
         x, y, z = pos
         duration = note.duration * 60000 / (480 * self.conductor.bpm)
         start_pos = (x, y, z)
-        end_pos = (x, y, z + (note.speed * note.duration) * 2)
+        end_pos = start_pos
+        # end_pos = (x, y, z + (note.speed * note.duration) * 2)
         time = duration * 2
 
         synth.send_note(note.pitch, note.velocity, duration,

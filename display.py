@@ -18,21 +18,25 @@ from notedisplay import NoteDisplay
 from spheredisplay import Sphere
 from linedisplay import Line
 from planedisplay import Plane
+from selfplanedisplay import SelfPlane
 import synth
 from config import config
 
 
 class DisplayController(object):
-    def __init__(self, width, height, canvas, on_sound):
+    def __init__(self, width, height, canvas, on_sound, eye_pos, eye_angle):
         super(DisplayController, self).__init__()
         self.canvas = canvas
         self.on_sound = on_sound
         self.width = width
         self.height = height
+        self.eye_pos = eye_pos
+        self.eye_angle = eye_angle
         self.canvas.shader.source = resource_find('simple.glsl')
 
         self.notes = []
-        self.planes = range(-10 * config['PLANE_SPACING'], 10 * config['PLANE_SPACING'], config['PLANE_SPACING'])
+        # self.planes = range(-10 * config['PLANE_SPACING'], 10 * config['PLANE_SPACING'], config['PLANE_SPACING'])
+        self.planes = []
 
         self.note_displays = InstructionGroup()
         self.plane_displays = InstructionGroup()
@@ -53,9 +57,17 @@ class DisplayController(object):
         self.canvas.add(self.line_displays)
         self.canvas.add(PopMatrix())
 
+        # self.canvas.add(PushMatrix())
+        # self.canvas.add(self.fixed_x)
+        # self.canvas.add(self.fixed_y)
+        # self.canvas.add(self.plane_displays)
+        # self.canvas.add(PopMatrix())
+
         self.canvas.add(PushMatrix())
-        self.canvas.add(self.plane_displays)
-        self.canvas.add(PopMatrix())
+        self.canvas.add(self.fixed_x)
+        self.canvas.add(self.fixed_y)
+        self.canvas.add(self.fixed_z)
+        self.canvas.add(SelfPlane(-config['SELF_PLANE_DISTANCE'], (0x20/255., 0xD8/255., 0xE9/255.)))
 
         self.canvas.add(PopMatrix())
         self.canvas.add(Callback(self.reset_gl_context))
@@ -77,7 +89,7 @@ class DisplayController(object):
         s = config['LINE_SPACING']
         for x in xrange(-5, 5):
             for y in xrange(-5, 5):
-                self.line_displays.add(Line(x * s, y * s, (0.0, 0.0, 1.0)))
+                self.line_displays.add(Line(x * s, y * s, (0.7, 0.5, 0.0)))
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -99,7 +111,11 @@ class DisplayController(object):
                           upx, upy, upz)
         return mat
 
-    def update_camera(self, x, y, z, azi, ele):
+    def update_camera(self, pos, angle):
+        self.eye_pos = pos
+        self.eye_angle = angle
+        x, y, z = pos
+        azi, ele = angle
         asp = self.width / float(self.height)
         mat = self.get_look_at(x, y, z, azi, ele)
 
@@ -113,9 +129,19 @@ class DisplayController(object):
         self.fixed_y.y = y
         self.fixed_z.z = z
 
+    def get_self_plane_z(self):
+        return self.eye_pos[2] - config['SELF_PLANE_DISTANCE']
+
 
     def on_update(self, now_tick):
+        z = self.get_self_plane_z()
         for s in self.notes:
+            if s.past_me and s.compute_pos(now_tick)[2] < z:
+                s.past_me = False
+            if s.compute_pos(now_tick)[2] > z and not s.past_me:
+                s.sound(now_tick)
+                s.past_me = True
+
             continueFlag = s.on_update(now_tick)
             if not continueFlag:
                 self.note_displays.remove(s)

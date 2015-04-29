@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 972.0, 128.0, 415.0, 452.0 ],
+		"rect" : [ 34.0, 78.0, 1612.0, 933.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -37,6 +37,47 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-72",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 226.0, 280.0, 150.0, 20.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 213.0, 264.5, 150.0, 20.0 ],
+					"style" : "",
+					"text" : "Doppler Enable"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-64",
+					"maxclass" : "toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "int" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 849.0, 292.0, 24.0, 24.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 161.0, 252.0, 45.0, 45.0 ],
+					"style" : ""
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-7",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 849.0, 329.0, 96.0, 22.0 ],
+					"style" : "",
+					"text" : "s dopplerenable"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-51",
 					"maxclass" : "comment",
@@ -986,7 +1027,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 1006.0, 125.0, 640.0, 480.0 ],
+						"rect" : [ 841.0, 141.0, 640.0, 480.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -1494,7 +1535,7 @@
 											"modernui" : 1
 										}
 ,
-										"rect" : [ 1051.0, 210.0, 640.0, 480.0 ],
+										"rect" : [ 236.0, 154.0, 640.0, 480.0 ],
 										"bglocked" : 0,
 										"openinpresentation" : 0,
 										"default_fontsize" : 12.0,
@@ -3082,6 +3123,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-64", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-57", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -3157,11 +3207,11 @@
 			"obj-32" : [ "number[2]", "number[2]", 0 ],
 			"obj-47" : [ "number[8]", "number[8]", 0 ],
 			"obj-37" : [ "number[3]", "number[3]", 0 ],
-			"obj-49" : [ "number[9]", "number[9]", 0 ],
-			"obj-24" : [ "number", "number", 0 ],
 			"obj-39" : [ "number[4]", "number[4]", 0 ],
 			"obj-41" : [ "number[5]", "number[5]", 0 ],
+			"obj-24" : [ "number", "number", 0 ],
 			"obj-43" : [ "number[6]", "number[6]", 0 ],
+			"obj-49" : [ "number[9]", "number[9]", 0 ],
 			"obj-29" : [ "number[1]", "number[1]", 0 ],
 			"obj-45" : [ "number[7]", "number[7]", 0 ]
 		}
