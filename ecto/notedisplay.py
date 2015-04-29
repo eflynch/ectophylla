@@ -4,9 +4,9 @@ import numpy as np
 
 from kivy.graphics import InstructionGroup
 
-from shapes import Sphere, Diamond
-import synth
-from config import config
+from ecto.shapes import Sphere, Diamond
+import ecto.synth
+from ecto.config import config
 
 class NoteDisplay(InstructionGroup):
     def __init__(self, note_data, planes, ac):
@@ -25,7 +25,7 @@ class NoteDisplay(InstructionGroup):
         self.add(self.sound_group)
 
     def pos_from_tick(self, tick):
-        z = - (self.note.tp - tick) * self.note.speed
+        z = - (self.note.tick - tick) * config['UNITS_PER_TICK']
         x = config['LINE_SPACING'] * self.note.x
         y = config['LINE_SPACING'] * self.note.y
         return (x, y, z)

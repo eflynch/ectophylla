@@ -1,8 +1,8 @@
 from kivy.resources import resource_find
 
-from objloader import ObjFileLoader
+from ecto.objloader import ObjFileLoader
 
-from nurbdisplay import NurbDisplay
+from ecto.nurbdisplay import NurbDisplay
 
 # Important Optimization: Load the nurb files only once at startup
 def get_nurb(filename, nurb_name):

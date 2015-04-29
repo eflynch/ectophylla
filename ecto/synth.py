@@ -1,7 +1,7 @@
 import liblo
 
 from kivy.logger import Logger
-from config import config
+from ecto.config import config
 
 #parameters
 OSC_OUT_PORT = config['OSC_OUT_PORT'] 

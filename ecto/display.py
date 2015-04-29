@@ -11,13 +11,13 @@ import kivy.graphics.opengl as gl
 from kivy.clock import Clock as kivyClock
 from kivy.resources import resource_find
 
-from eran.core import run, BaseWidget
-from objloader import ObjFileLoader
-from note import Note
-from notedisplay import NoteDisplay
-from shapes import Sphere, Line, Plane
-import synth
-from config import config
+from ecto.eran.core import run, BaseWidget
+from ecto.objloader import ObjFileLoader
+from ecto.note import Note
+from ecto.notedisplay import NoteDisplay
+from ecto.shapes import Sphere, Line, Plane
+from ecto.config import config
+import ecto.synth
 
 
 class DisplayController(object):
@@ -30,7 +30,7 @@ class DisplayController(object):
         self.eye_angle = eye_angle
         self.ac = ac
 
-        self.canvas.shader.source = resource_find('simple.glsl')
+        self.canvas.shader.source = resource_find('data/simple.glsl')
 
         self.notes = []
         # self.planes = range(0, 10 * config['PLANE_SPACING'], config['PLANE_SPACING'])

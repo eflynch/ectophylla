@@ -1,6 +1,7 @@
 from eran.clock import Clock, Conductor, Scheduler
 
-import synth
+import ecto.config
+import ecto.synth as synth
 
 class AudioController(object):
     def __init__(self):
@@ -21,7 +22,7 @@ class AudioController(object):
         duration = note.duration * 60000 / (480 * self.scheduler.cond.bpm)
         start_pos = (x, y, z)
         end_pos = start_pos
-        # end_pos = (x, y, z + (note.speed * note.duration) * 2)
+        # end_pos = (x, y, z + (config['UNITS_PER_TICK'] * note.duration) * 2)
         time = duration * 2
 
         synth.send_note(note.pitch, note.velocity, duration,

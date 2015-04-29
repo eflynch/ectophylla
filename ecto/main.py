@@ -1,21 +1,18 @@
 from random import randint, random
+
 import numpy as np
 
-LOG_LEVEL = 'info'
-
-from kivy.config import Config
-Config.set('kivy', 'log_level', LOG_LEVEL)
 from kivy.graphics import RenderContext
 from kivy.clock import Clock as kivyClock
 from kivy.resources import resource_find
 
-from eran.core import run, BaseWidget
-from display import DisplayController
-from audio import AudioController
-from note import Note
-import synth
-from scoreloader import load_score
-from config import config
+from ecto.eran.core import BaseWidget
+from ecto.display import DisplayController
+from ecto.audio import AudioController
+from ecto.note import Note
+import ecto.synth as synth
+from ecto.scoreloader import load_score
+from ecto.config import config
 
 
 class MainWidget(BaseWidget):
@@ -106,7 +103,7 @@ class MainWidget(BaseWidget):
             notes = []
             for i in xrange(10):
                 n = Note(randint(48, 70), 1.0, 480 * randint(1, 5), x,
-                         y, now_tick + randint(0, 480*20), 0.05 + 0.001 * random())
+                         y, now_tick + randint(0, 480*20))
                 notes.append(n)
 
             self.display.add_notes(notes)
@@ -150,6 +147,3 @@ class MainWidget(BaseWidget):
         self.display.on_update(now_tick)
         for k in self._camera_keys:
             self.handle_camera_key(k)
-
-
-run(MainWidget)
