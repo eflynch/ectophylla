@@ -10,12 +10,11 @@ from kivy.clock import Clock as kivyClock
 from kivy.resources import resource_find
 
 from eran.core import run, BaseWidget
-from eran.clock import Clock, Conductor
-from objloader import ObjFileLoader
 from display import DisplayController
+from audio import AudioController
 from note import Note
 import synth
-import score_parser
+from scoreloader import load_score
 from config import config
 
 
@@ -23,16 +22,17 @@ class MainWidget(BaseWidget):
     def __init__(self):
         super(MainWidget, self).__init__()
 
-        clock = Clock()
-        self.conductor = Conductor(clock)
+        self.ac = AudioController()
+
         self.eye_pos = (0., 0., 0.)
         self.eye_angle = (0., 0.)
 
         self.canvas = RenderContext(compute_normal_mat=True)
-        self.display = DisplayController(self.width, self.height, self.canvas,
-                                         self.on_sound, self.eye_pos, self.eye_angle)
+        self.display = DisplayController(self.width, self.height, self.canvas, self.ac,
+                                         self.eye_pos, self.eye_angle)
         self.canvas = self.display.canvas
         self._touches = []
+        self._camera_keys = []
         self.update_camera()
 
     def update_camera(self):
@@ -57,8 +57,8 @@ class MainWidget(BaseWidget):
     def move_camera_angle(self, dazi, dele):
         self.set_camera_angle((self.eye_angle[0] + dazi, self.eye_angle[1] + dele))
 
-    def handle_camera(self, key):
-        SPEED = 1.0
+    def handle_camera_key(self, key):
+        SPEED = 0.3
         dy = dx = dz = dazi = dele = 0
         if key == 'q': # up
             dy = -SPEED
@@ -76,49 +76,40 @@ class MainWidget(BaseWidget):
         elif key == 'w': # forwards
             dz = - SPEED * np.cos(self.eye_angle[0])
             dx = - SPEED * np.sin(self.eye_angle[0])
-        elif key == 'z':
-            dazi = SPEED / 4
-        elif key == 'x':
-            dazi = - SPEED / 4
-        elif key == 'v':
-            dele = SPEED / 4
-        elif key == 'c':
-            dele = - SPEED / 4
-
-        self.move_camera_angle(dazi, dele)
         self.move_camera_pos(dx, dy, dz)
 
-    def on_key_down(self, keycode, modifiers):
+    def on_key_up(self, keycode):
+        if keycode[1] in 'wasdqe':
+            self._camera_keys.remove(keycode[1])
 
-        if keycode[1] in 'wasdqezxcv':
-            self.handle_camera(keycode[1])
+    def on_key_down(self, keycode, modifiers):
+        if keycode[1] in 'wasdqe':
+            self._camera_keys.append(keycode[1])
 
         elif keycode[1] == 'p':
-            self.conductor.clock.toggle()
+            self.ac.toggle()
 
         elif keycode[1] == 'o':
-            self.conductor.set_bpm(self.conductor.bpm * 1.05)
+            self.ac.bpm = (self.ac.bpm * 1.05)
 
         elif keycode[1] == 'i':
-            self.conductor.set_bpm(self.conductor.bpm * 0.95)
+            self.ac.bpm = (self.ac.bpm * 0.95)
 
         elif keycode[1] == 'r':
-            note_data = score_parser.parse('score.txt')
+            note_data = load_score('score')
             self.display.add_notes(note_data)
 
         elif keycode[1] == 'spacebar':
-            now_tick = self.conductor.get_tick()
+            now_tick = self.ac.tick
             x = randint(-5, 5)
             y = randint(-5, 5)
             notes = []
             for i in xrange(10):
                 n = Note(randint(48, 70), 1.0, 480 * randint(1, 5), x,
-                         y, now_tick + randint(0, 480*20), 0.01 * random())
+                         y, now_tick + randint(0, 480*20), 0.05 + 0.001 * random())
                 notes.append(n)
 
             self.display.add_notes(notes)
-
-        
 
     def define_rotate_angle(self, touch):
         x_angle = - (touch.dx/self.width) * 2 * np.pi
@@ -155,19 +146,10 @@ class MainWidget(BaseWidget):
                 self.move_camera_angle(dazi, dele)
 
     def on_update(self):
-        now_tick = self.conductor.get_tick()
+        now_tick = self.ac.tick
         self.display.on_update(now_tick)
-
-    def on_sound(self, note, pos):
-        x, y, z = pos
-        duration = note.duration * 60000 / (480 * self.conductor.bpm)
-        start_pos = (x, y, z)
-        end_pos = start_pos
-        # end_pos = (x, y, z + (note.speed * note.duration) * 2)
-        time = duration * 2
-
-        synth.send_note(note.pitch, note.velocity, duration,
-                        start_pos, end_pos, time)
+        for k in self._camera_keys:
+            self.handle_camera_key(k)
 
 
 run(MainWidget)

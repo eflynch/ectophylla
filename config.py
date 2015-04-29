@@ -1,7 +1,7 @@
 config = {
-    'PLANE_SPACING': 30,
+    'PLANE_SPACING': 50,
     'LINE_SPACING': 10,
-    'UNITS_PER_METER': 5.0,
+    'UNITS_PER_METER': 3.0,
     'SELF_PLANE_DISTANCE': 5,
     'OSC_OUT_PORT': 5555
 }

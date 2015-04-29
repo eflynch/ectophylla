@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 878.0, 79.0, 459.0, 471.0 ],
+		"rect" : [ 975.0, 79.0, 572.0, 471.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -2550,7 +2550,9 @@
 				"type" : "iLaX"
 			}
  ],
-		"embedsnapshot" : 0
+		"embedsnapshot" : 0,
+		"toolbaradditions" : [ "transport", "audiomute", "audiosolo" ],
+		"toolbarexclusions" : [ "savefavorite", "calendar" ]
 	}
 
 }

@@ -24,9 +24,3 @@ def send_camera_pos(x, y, z):
 def send_camera_angle(azimuth, elevation):
     Logger.debug('Camera Angle: %s %s' % (azimuth, elevation))
     liblo.send(addr, '/camera/angle', azimuth, elevation)
-
-if __name__ == "__main__":
-    send_camera_pos(0, 0, 1)
-    send_camera_angle(0, 0)
-    # send_note(60, 1.0, 3000, (16, 0, 0), (18, 0, 0), 3300)
-    # send_note(57, 1.0, 3000, (10, 0, 0), (0, 0, 0), 3300)

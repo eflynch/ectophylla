@@ -21,18 +21,19 @@ from config import config
 
 
 class DisplayController(object):
-    def __init__(self, width, height, canvas, on_sound, eye_pos, eye_angle):
+    def __init__(self, width, height, canvas, ac, eye_pos, eye_angle):
         super(DisplayController, self).__init__()
-        self.canvas = canvas
-        self.on_sound = on_sound
         self.width = width
         self.height = height
+        self.canvas = canvas
         self.eye_pos = eye_pos
         self.eye_angle = eye_angle
+        self.ac = ac
+
         self.canvas.shader.source = resource_find('simple.glsl')
 
         self.notes = []
-        # self.planes = range(-10 * config['PLANE_SPACING'], 10 * config['PLANE_SPACING'], config['PLANE_SPACING'])
+        # self.planes = range(0, 10 * config['PLANE_SPACING'], config['PLANE_SPACING'])
         self.planes = []
 
         self.note_displays = InstructionGroup()
@@ -54,17 +55,18 @@ class DisplayController(object):
         self.canvas.add(self.line_displays)
         self.canvas.add(PopMatrix())
 
+        self.canvas.add(PushMatrix())
+        # self.canvas.add(self.fixed_x)
+        # self.canvas.add(self.fixed_y)
+        self.canvas.add(self.plane_displays)
+        self.canvas.add(PopMatrix())
+
         # self.canvas.add(PushMatrix())
         # self.canvas.add(self.fixed_x)
         # self.canvas.add(self.fixed_y)
-        # self.canvas.add(self.plane_displays)
+        # self.canvas.add(self.fixed_z)
+        # self.canvas.add(Plane(-config['SELF_PLANE_DISTANCE'], size=0.1, color=(0x20/255., 0xD8/255., 0xE9/255.), tr=0.2))
         # self.canvas.add(PopMatrix())
-
-        self.canvas.add(PushMatrix())
-        self.canvas.add(self.fixed_x)
-        self.canvas.add(self.fixed_y)
-        self.canvas.add(self.fixed_z)
-        self.canvas.add(Plane(-config['SELF_PLANE_DISTANCE'], size=0.05, color=(0x20/255., 0xD8/255., 0xE9/255.), tr=0.2))
 
         self.canvas.add(PopMatrix())
         self.canvas.add(Callback(self.reset_gl_context))
@@ -74,7 +76,7 @@ class DisplayController(object):
 
     def add_notes(self, note_data):
         for sn in note_data:
-            nd = NoteDisplay(sn, self.planes, self.on_sound)
+            nd = NoteDisplay(sn, self.planes, self.ac)
             self.note_displays.add(nd)
             self.notes.append(nd)
 
@@ -126,20 +128,19 @@ class DisplayController(object):
         self.fixed_y.y = y
         self.fixed_z.z = z
 
-    def get_self_plane_z(self):
-        return self.eye_pos[2] - config['SELF_PLANE_DISTANCE']
-
-
-    def on_update(self, now_tick):
-        z = self.get_self_plane_z()
+    def on_update(self, tick):
+        self_plane_z = self.eye_pos[2] - config['SELF_PLANE_DISTANCE']
         for s in self.notes:
-            if s.past_me and s.compute_pos(now_tick)[2] < z:
+            pos = s.pos_from_tick(tick)
+            s.set_pos(pos)
+            s.on_update(tick)
+
+            if s.past_me and pos[2] < self_plane_z:
                 s.past_me = False
-            if s.compute_pos(now_tick)[2] > z and not s.past_me:
-                s.sound(now_tick)
+            if pos[2] > self_plane_z and not s.past_me:
+                s.sound(tick, pos)
                 s.past_me = True
 
-            continueFlag = s.on_update(now_tick)
-            if not continueFlag:
+            if pos[2] > 1000:
                 self.note_displays.remove(s)
                 self.notes.remove(s)

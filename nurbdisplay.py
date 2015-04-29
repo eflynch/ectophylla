@@ -1,16 +1,13 @@
 import numpy as np
 
-from kivy.resources import resource_find
 from kivy.graphics import Mesh, InstructionGroup, Color, Translate, PushMatrix, PopMatrix, Scale, ChangeState
 
-from objloader import ObjFileLoader
 
 
 class NurbDisplay(InstructionGroup):
-    def __init__(self, filename, nurb_name, pos, size=1.0, color=(0.0,1.0,0.0), tr=1.0, intensity=1.0):
+    def __init__(self, nurb, pos, size=1.0, color=(0.0,1.0,0.0), tr=1.0, intensity=1.0):
         super(NurbDisplay, self).__init__()
-        nurbs = ObjFileLoader(resource_find(filename))
-        nurb = nurbs.objects[nurb_name]
+        
         self.color = color
         self.tr = tr
         self.intensity = intensity
