@@ -4,8 +4,7 @@ import numpy as np
 
 from kivy.graphics import InstructionGroup
 
-from spheredisplay import Sphere
-from sounddisplay import SoundDisplay
+from shapes import Sphere, Diamond
 import synth
 from config import config
 
@@ -21,7 +20,7 @@ class NoteDisplay(InstructionGroup):
         self.sounds = []
         self.sound_group = InstructionGroup()
 
-        self.sphere = Sphere(self.compute_pos(), 0.3)
+        self.sphere = Sphere(self.compute_pos(), size=0.3, intensity=0.7)
         self.add(self.sphere)
         self.add(self.sound_group)
 
@@ -38,7 +37,7 @@ class NoteDisplay(InstructionGroup):
         self.sphere.set_color(color)
 
         exp_t = now_tick + self.note.duration
-        sound_display = SoundDisplay((x, y, z), 0.6, color)
+        sound_display = Diamond((x, y, z), size=0.2, color=color, intensity=0.3)
 
         self.sounds.append((exp_t, sound_display))
         self.sounds.sort()
@@ -62,4 +61,4 @@ class NoteDisplay(InstructionGroup):
                 self.sound(now_tick)
                 self.sound_count += 1
 
-        return z < 220
+        return z < 10000

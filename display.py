@@ -15,10 +15,7 @@ from eran.core import run, BaseWidget
 from objloader import ObjFileLoader
 from note import Note
 from notedisplay import NoteDisplay
-from spheredisplay import Sphere
-from linedisplay import Line
-from planedisplay import Plane
-from selfplanedisplay import SelfPlane
+from shapes import Sphere, Line, Plane
 import synth
 from config import config
 
@@ -67,7 +64,7 @@ class DisplayController(object):
         self.canvas.add(self.fixed_x)
         self.canvas.add(self.fixed_y)
         self.canvas.add(self.fixed_z)
-        self.canvas.add(SelfPlane(-config['SELF_PLANE_DISTANCE'], (0x20/255., 0xD8/255., 0xE9/255.)))
+        self.canvas.add(Plane(-config['SELF_PLANE_DISTANCE'], size=0.05, color=(0x20/255., 0xD8/255., 0xE9/255.), tr=0.2))
 
         self.canvas.add(PopMatrix())
         self.canvas.add(Callback(self.reset_gl_context))
@@ -83,13 +80,13 @@ class DisplayController(object):
 
     def draw_planes(self):
         for p in self.planes:
-            self.plane_displays.add(Plane(p, (0xE9/255., 0xD8/255., 0x3C/255.)))
+            self.plane_displays.add(Plane(p, color=(0xE9/255., 0xD8/255., 0x3C/255.)))
 
     def draw_lines(self):
         s = config['LINE_SPACING']
         for x in xrange(-5, 5):
             for y in xrange(-5, 5):
-                self.line_displays.add(Line(x * s, y * s, (0.7, 0.5, 0.0)))
+                self.line_displays.add(Line(x * s, y * s, color=(0.7, 0.5, 0.0)))
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)

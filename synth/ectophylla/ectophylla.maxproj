@@ -2,8 +2,8 @@
 	"name" : "ectophylla",
 	"version" : 1,
 	"creationdate" : -782557437,
-	"modificationdate" : -782415553,
-	"viewrect" : [ 807.0, 45.0, 300.0, 500.0 ],
+	"modificationdate" : -781854597,
+	"viewrect" : [ 818.0, 45.0, 300.0, 500.0 ],
 	"autoorganize" : 1,
 	"hideprojectwindow" : 0,
 	"showdependencies" : 1,
@@ -44,21 +44,6 @@
 		}
 ,
 		"externals" : 		{
-			"hoa.3d.map~.mxo" : 			{
-				"kind" : "object",
-				"local" : 1
-			}
-,
-			"hoa.pi.mxo" : 			{
-				"kind" : "object",
-				"local" : 1
-			}
-,
-			"hoa.3d.scope~.mxo" : 			{
-				"kind" : "object",
-				"local" : 1
-			}
-,
 			"OSC-route.mxo" : 			{
 				"kind" : "object"
 			}
@@ -66,6 +51,36 @@
 			"hoa.3d.decoder~.mxo" : 			{
 				"kind" : "object",
 				"local" : 1
+			}
+,
+			"hoa.3d.map~.mxo" : 			{
+				"kind" : "object",
+				"local" : 1,
+				"singleton" : 				{
+					"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
+					"projectrelativepath" : "./patchers/./patchers"
+				}
+
+			}
+,
+			"hoa.pi.mxo" : 			{
+				"kind" : "object",
+				"local" : 1,
+				"singleton" : 				{
+					"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
+					"projectrelativepath" : "./patchers/./patchers"
+				}
+
+			}
+,
+			"hoa.3d.scope~.mxo" : 			{
+				"kind" : "object",
+				"local" : 1,
+				"singleton" : 				{
+					"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
+					"projectrelativepath" : "./patchers/./patchers"
+				}
+
 			}
 
 		}
