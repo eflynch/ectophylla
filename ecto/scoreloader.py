@@ -16,10 +16,22 @@ def midi_to_txt(name):
 				if ch not in channels:
 					channels[ch] = []
 				channels[ch].append((t, n, v))
+			if 'Off' in line:
+				t, _, ch, n, _ = line.split(' ')
+				ch = int(ch[3:])
+				t = int(t)
+				n = int(n[2:])
+				v = 0
+				if ch not in channels:
+					channels[ch] = []
+				channels[ch].append((t, n, v))
 
 	with open('scores/%s.txt' % name, 'w') as f:
 		for ch in channels:
 			running_notes = {}
+			i = sorted(channels.keys()).index(ch)
+			x = (i % 5) - 5
+			y = (i - (i % 5))/10 - 5
 			for t, n, v in channels[ch]:
 				if v > 0:
 					running_notes[n] = t, v
@@ -28,7 +40,9 @@ def midi_to_txt(name):
 					tick = running_notes[n][0]
 					vel = running_notes[n][1] / 127.
 
-					line = '%s %s %s %s 0 %s' % (n, vel, duration, ch, tick)
+					
+
+					line = '%s %s %s %s %s %s' % (n, vel, duration, x, y, tick)
 
 					f.write('%s\n' % line)
 

@@ -14,6 +14,6 @@ from ecto.main import MainWidget
 
 from ecto.scoreloader import midi_to_txt
 
-# midi_to_txt('mahler')
+# midi_to_txt('rite')
 
 run(MainWidget)

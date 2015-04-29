@@ -1,6 +1,6 @@
 config = {
     'PLANE_SPACING': 50,
-    'LINE_SPACING': 10,
+    'LINE_SPACING': 5,
     'UNITS_PER_METER': 3.0,
     'UNITS_PER_TICK': 5/480.,
     'SELF_PLANE_DISTANCE': 5,
