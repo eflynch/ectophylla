@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 975.0, 79.0, 572.0, 471.0 ],
+		"rect" : [ 1216.0, 79.0, 420.0, 471.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -98,9 +98,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 119.833344, 267.0, 29.5, 22.0 ],
+					"patching_rect" : [ 119.833344, 267.0, 31.0, 22.0 ],
 					"style" : "",
-					"text" : "20"
+					"text" : "100"
 				}
 
 			}
@@ -950,7 +950,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 56.0, 267.0, 29.5, 22.0 ],
 					"style" : "",
-					"text" : "10"
+					"text" : "5"
 				}
 
 			}
@@ -1684,7 +1684,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 16,
 					"outlettype" : [ "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal" ],
-					"patching_rect" : [ 25.333344, 423.0, 368.0, 22.0 ],
+					"patching_rect" : [ 25.333344, 423.0, 176.5, 22.0 ],
 					"style" : "",
 					"text" : "poly~ ambisynth~ 10"
 				}
@@ -2482,16 +2482,16 @@
 			}
  ],
 		"parameters" : 		{
-			"obj-41" : [ "number[5]", "number[5]", 0 ],
+			"obj-24" : [ "number", "number", 0 ],
 			"obj-43" : [ "number[6]", "number[6]", 0 ],
 			"obj-29" : [ "number[1]", "number[1]", 0 ],
-			"obj-24" : [ "number", "number", 0 ],
 			"obj-45" : [ "number[7]", "number[7]", 0 ],
 			"obj-32" : [ "number[2]", "number[2]", 0 ],
 			"obj-47" : [ "number[8]", "number[8]", 0 ],
 			"obj-37" : [ "number[3]", "number[3]", 0 ],
 			"obj-49" : [ "number[9]", "number[9]", 0 ],
-			"obj-39" : [ "number[4]", "number[4]", 0 ]
+			"obj-39" : [ "number[4]", "number[4]", 0 ],
+			"obj-41" : [ "number[5]", "number[5]", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{
