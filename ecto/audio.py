@@ -9,6 +9,7 @@ class AudioController(object):
         clock = Clock()
         cond = Conductor(clock)
         self.scheduler = Scheduler(cond)
+        self.scheduler.cond.bpm = 60
 
     def toggle(self):
         self.scheduler.cond.clock.toggle()

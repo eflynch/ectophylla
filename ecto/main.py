@@ -93,8 +93,8 @@ class MainWidget(BaseWidget):
             self.ac.bpm = (self.ac.bpm * 0.95)
 
         elif keycode[1] == 'r':
-            note_data = load_score('score')
-            self.display.add_notes(note_data)
+            note_data = load_score('mahler')
+            self.display.add_notes(note_data[:4000])
 
         elif keycode[1] == 'spacebar':
             now_tick = self.ac.tick
