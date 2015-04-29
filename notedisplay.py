@@ -61,4 +61,4 @@ class NoteDisplay(InstructionGroup):
                 self.sound(now_tick)
                 self.sound_count += 1
 
-        return z < 10000
+        return z < 1000
