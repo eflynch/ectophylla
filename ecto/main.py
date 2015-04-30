@@ -32,6 +32,12 @@ class MainWidget(BaseWidget):
         self._camera_keys = []
         self.update_camera()
 
+        self.note_queue = []
+
+    def add_to_queue(self, note_data):
+        self.note_queue.extend(note_data)
+        self.note_queue.sort(key=lambda n: n.tick)
+
     def update_camera(self):
         self.display.update_camera(self.eye_pos, self.eye_angle)
 
@@ -55,7 +61,7 @@ class MainWidget(BaseWidget):
         self.set_camera_angle((self.eye_angle[0] + dazi, self.eye_angle[1] + dele))
 
     def handle_camera_key(self, key):
-        SPEED = 0.3
+        SPEED = 0.4
         dy = dx = dz = dazi = dele = 0
         if key == 'q': # up
             dy = -SPEED
@@ -94,11 +100,11 @@ class MainWidget(BaseWidget):
 
         elif keycode[1] == 'r':
             note_data = load_score('rite')
-            self.display.add_notes(note_data[:4000])
+            self.add_to_queue(note_data)
 
         elif keycode[1] == 'm':
             note_data = load_score('mahler')
-            self.display.add_notes(note_data[:4000])
+            self.add_to_queue(note_data)
 
         elif keycode[1] == 'spacebar':
             now_tick = self.ac.tick
@@ -151,3 +157,14 @@ class MainWidget(BaseWidget):
         self.display.on_update(now_tick)
         for k in self._camera_keys:
             self.handle_camera_key(k)
+
+        new_notes = []
+        while self.note_queue:
+            if self.note_queue[0].tick > now_tick + 10000:
+                break
+
+            n = self.note_queue.pop(0)
+            new_notes.append(n)
+
+        self.display.add_notes(new_notes)
+

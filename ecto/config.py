@@ -1,8 +1,8 @@
 config = {
     'PLANE_SPACING': 50,
-    'LINE_SPACING': 5,
-    'UNITS_PER_METER': 3.0,
-    'UNITS_PER_TICK': 5/480.,
+    'LINE_SPACING': 10,
+    'UNITS_PER_METER': 4.0,
+    'UNITS_PER_TICK': 30./480.,
     'SELF_PLANE_DISTANCE': 5,
     'OSC_OUT_PORT': 5555
 }

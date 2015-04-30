@@ -117,7 +117,7 @@ class Conductor(object):
          # using y = mx + b, y is tick, x = time, m is tempo slope, b is self.offset
          # so b = y - mx:
          self.bpm = bpm
-         self.offset = tick - (self.bpm / 60) * kTicksPerQuarter * time
+         self.offset = tick - self.bpm * kTicksPerQuarter * time / 60
 
    def get_bpm(self) :
       if self.tempo_map:

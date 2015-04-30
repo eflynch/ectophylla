@@ -8,6 +8,8 @@ from ecto.shapes import Sphere, Diamond
 import ecto.synth
 from ecto.config import config
 
+COLORS = { i: (random(), random(), random()) for i in xrange(12)}
+
 class NoteDisplay(InstructionGroup):
     def __init__(self, note_data, planes, ac):
         super(NoteDisplay, self).__init__()
@@ -38,7 +40,7 @@ class NoteDisplay(InstructionGroup):
         self.ac.play_note(tick, self.note, pos)
 
         # Render Sound
-        color = (random(), random(), random())
+        color = COLORS[self.note.pitch % 12]
         exp_tick = tick + self.note.duration
         sound_display = Diamond(pos, size=0.2, color=color, intensity=0.3)
         self.sounds.append((exp_tick, sound_display))

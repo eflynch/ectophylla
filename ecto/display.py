@@ -29,6 +29,7 @@ class DisplayController(object):
         self.eye_pos = eye_pos
         self.eye_angle = eye_angle
         self.ac = ac
+        self.tick_range = 24000
 
         self.canvas.shader.source = resource_find('data/simple.glsl')
 
@@ -76,6 +77,8 @@ class DisplayController(object):
 
     def add_notes(self, note_data):
         for sn in note_data:
+            if abs(sn.tick - self.ac.tick) > self.tick_range:
+                continue
             nd = NoteDisplay(sn, self.planes, self.ac)
             self.note_displays.add(nd)
             self.notes.append(nd)
@@ -141,6 +144,6 @@ class DisplayController(object):
                 s.sound(tick, pos)
                 s.past_me = True
 
-            if pos[2] > 1000:
+            if abs(s.note.tick - tick) > self.tick_range:
                 self.note_displays.remove(s)
                 self.notes.remove(s)

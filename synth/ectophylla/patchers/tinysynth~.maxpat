@@ -38,6 +38,18 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-6",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 366.0, 568.0, 150.0, 20.0 ],
+					"style" : "",
+					"text" : "Bang when done"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"comment" : "",
 					"id" : "obj-9",
 					"maxclass" : "outlet",
@@ -119,7 +131,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 405.0, 40.0, 150.0, 20.0 ],
 					"style" : "",
-					"text" : "Parameters"
+					"text" : "Static Parameters"
 				}
 
 			}
