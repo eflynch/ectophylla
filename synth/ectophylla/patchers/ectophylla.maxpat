@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 1216.0, 79.0, 420.0, 471.0 ],
+		"rect" : [ 1031.0, 121.0, 454.0, 471.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -37,6 +37,32 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-68",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 22.0, 534.0, 60.0, 22.0 ],
+					"style" : "",
+					"text" : "loadbang"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-66",
+					"maxclass" : "toggle",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "int" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 92.0, 557.0, 24.0, 24.0 ],
+					"style" : ""
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-72",
 					"maxclass" : "comment",
@@ -2419,10 +2445,28 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-83", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-66", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-59", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-67", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-66", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-68", 0 ]
 				}
 
 			}
@@ -2482,16 +2526,16 @@
 			}
  ],
 		"parameters" : 		{
-			"obj-24" : [ "number", "number", 0 ],
-			"obj-43" : [ "number[6]", "number[6]", 0 ],
 			"obj-29" : [ "number[1]", "number[1]", 0 ],
 			"obj-45" : [ "number[7]", "number[7]", 0 ],
+			"obj-49" : [ "number[9]", "number[9]", 0 ],
 			"obj-32" : [ "number[2]", "number[2]", 0 ],
 			"obj-47" : [ "number[8]", "number[8]", 0 ],
+			"obj-24" : [ "number", "number", 0 ],
 			"obj-37" : [ "number[3]", "number[3]", 0 ],
-			"obj-49" : [ "number[9]", "number[9]", 0 ],
 			"obj-39" : [ "number[4]", "number[4]", 0 ],
-			"obj-41" : [ "number[5]", "number[5]", 0 ]
+			"obj-41" : [ "number[5]", "number[5]", 0 ],
+			"obj-43" : [ "number[6]", "number[6]", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{
