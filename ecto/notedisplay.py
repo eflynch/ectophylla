@@ -5,10 +5,12 @@ import numpy as np
 from kivy.graphics import InstructionGroup
 
 from ecto.shapes import Sphere, Diamond
+from matplotlib.pyplot import get_cmap
+# from matplotlib.pyplot import get_cmap
 import ecto.synth
 from ecto.config import config
 
-COLORS = { i: (random(), random(), random()) for i in xrange(12)}
+# COLORS = { 0:() ,1)
 
 class NoteDisplay(InstructionGroup):
     def __init__(self, note_data, planes, ac):
@@ -21,10 +23,16 @@ class NoteDisplay(InstructionGroup):
 
         self.sounds = []
         self.sound_group = InstructionGroup()
-
-        self.sphere = Sphere(self.pos_from_tick(ac.tick), size=0.3, intensity=0.7)
+        # print self.note.pitch
+        self.sphere = Sphere(self.pos_from_tick(ac.tick), self.get_color(self.note.pitch), size=0.3, intensity=0.7)
         self.add(self.sphere)
         self.add(self.sound_group)
+
+    def get_color(self, num):
+        cmap = get_cmap('gist_ncar')
+        # import pdb; pdb.set_trace()
+        print cmap(num*3)[:3]
+        return cmap(num*3)[:3]
 
     def pos_from_tick(self, tick):
         z = - (self.note.tick - tick) * config['UNITS_PER_TICK']
@@ -40,14 +48,14 @@ class NoteDisplay(InstructionGroup):
         self.ac.play_note(tick, self.note, pos)
 
         # Render Sound
-        color = COLORS[self.note.pitch % 12]
+        # color = COLORS[self.note.pitch % 12]
         exp_tick = tick + self.note.duration
-        sound_display = Diamond(pos, size=0.2, color=color, intensity=0.3)
+        sound_display = Diamond(pos, size=0.2, color=(0.0, 1.0, 0.0), intensity=0.3)
         self.sounds.append((exp_tick, sound_display))
         self.sounds.sort()
         self.sound_group.add(sound_display)
 
-        self.sphere.set_color(color)
+        self.sphere.set_color((0.55, 0.55, 0.65))
 
     def on_update(self, tick):
         while self.sounds:
