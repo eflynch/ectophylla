@@ -79,6 +79,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"bubblesize" : 23,
@@ -1951,7 +1952,7 @@
 					"outlettype" : [ "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal", "signal" ],
 					"patching_rect" : [ 25.333344, 423.0, 176.5, 22.0 ],
 					"style" : "",
-					"text" : "poly~ ambisynth~ 5 @steal"
+					"text" : "poly~ ambisynth~ 5 @steal 1"
 				}
 
 			}
@@ -2863,13 +2864,6 @@
 			}
 , 			{
 				"name" : "lfo.sine.poly.maxpat",
-				"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
-				"patcherrelativepath" : ".",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "reso3.poly.maxpat",
 				"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",

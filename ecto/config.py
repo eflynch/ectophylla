@@ -4,5 +4,6 @@ config = {
     'UNITS_PER_METER': 2.0,
     'UNITS_PER_TICK': 10./480.,
     'SELF_PLANE_DISTANCE': 5,
-    'OSC_OUT_PORT': 5555
+    'OSC_OUT_PORT': 5555,
+    'VISIBLE_TICK_RANGE': 480 * 5
 }

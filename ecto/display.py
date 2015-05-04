@@ -31,7 +31,6 @@ class DisplayController(object):
         self.eye_pos = eye_pos
         self.eye_angle = eye_angle
         self.ac = ac
-        self.tick_range = 12000
 
         self.canvas.shader.source = resource_find('data/simple.glsl')
 
@@ -41,6 +40,7 @@ class DisplayController(object):
 
         # self.planes = range(0, 10 * config['PLANE_SPACING'], config['PLANE_SPACING'])
         self.planes = []
+        self.lines = []
 
         self.note_displays = InstructionGroup()
         self.plane_displays = InstructionGroup()
@@ -77,10 +77,15 @@ class DisplayController(object):
         self.canvas.add(PopMatrix())
         self.canvas.add(Callback(self.reset_gl_context))
 
-        self.draw_lines()
         self.draw_planes()
 
     def add_notes(self, note_data):
+        s = config['LINE_SPACING']
+        for nd in note_data:
+            if (nd.x, nd.y) not in self.lines:
+                self.line_displays.add(Line(nd.x * s, nd.y * s, color=(0.7, 0.5, 0.0)))
+                self.lines.append((nd.x, nd.y))
+
         self.all_notes.extend(note_data)
         self.all_notes.sort(key=lambda n:n.tick)
         self.ticks = map(lambda n:n.tick, self.all_notes)
@@ -88,12 +93,6 @@ class DisplayController(object):
     def draw_planes(self):
         for p in self.planes:
             self.plane_displays.add(Plane(p, color=(0xE9/255., 0xD8/255., 0x3C/255.)))
-
-    def draw_lines(self):
-        s = config['LINE_SPACING']
-        for x in xrange(-5, 5):
-            for y in xrange(-5, 5):
-                self.line_displays.add(Line(x * s, y * s, color=(0.7, 0.5, 0.0)))
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)
@@ -145,7 +144,7 @@ class DisplayController(object):
 
         eye_tick = tick + ( - self.eye_pos[2] / config['UNITS_PER_TICK'])
 
-        in_range = self.get_notes_in_range(eye_tick - self.tick_range, eye_tick + self.tick_range)
+        in_range = self.get_notes_in_range(eye_tick - config['VISIBLE_TICK_RANGE'], eye_tick + config['VISIBLE_TICK_RANGE'])
 
         to_remove = []
         for nd in self.visible_notes:
