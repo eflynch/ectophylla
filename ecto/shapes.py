@@ -25,7 +25,7 @@ class Line(NurbDisplay):
         super(Line, self).__init__(line, (x, y, 0), size, color, tr, intensity)
 
 class Sphere(NurbDisplay):
-    def __init__(self, pos, color=(0.0, 1.0, 0.0), size=1.0, tr=1.0, intensity=0.7):
+    def __init__(self, pos, color, size=1.0, tr=1.0, intensity=0.7):
         super(Sphere, self).__init__(sphere, pos, size, color, tr, intensity)
 
 class Diamond(NurbDisplay):
