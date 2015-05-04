@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 486.0, 158.0, 961.0, 639.0 ],
+		"rect" : [ 435.0, 263.0, 961.0, 639.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -37,6 +37,19 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "signal", "bang" ],
+					"patching_rect" : [ 617.0, 201.0, 74.0, 22.0 ],
+					"style" : "",
+					"text" : "kasiosynth~"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-6",
 					"maxclass" : "comment",
@@ -341,10 +354,28 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-8", 0 ],
+					"destination" : [ "obj-5", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-29", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-30", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-5", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-5", 1 ]
 				}
 
 			}
@@ -354,15 +385,6 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-7", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-30", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-71", 0 ]
 				}
 
 			}
@@ -489,7 +511,49 @@
 
 			}
  ],
-		"dependency_cache" : [  ],
+		"dependency_cache" : [ 			{
+				"name" : "kasiosynth~.maxpat",
+				"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "noisegen.poly.maxpat",
+				"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "lfomain.poly.maxpat",
+				"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "lfo.tri.poly.maxpat",
+				"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "czline.maxpat",
+				"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "saw.poly.maxpat",
+				"bootpath" : "~/things/ectophylla/synth/ectophylla/patchers",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+ ],
 		"embedsnapshot" : 0
 	}
 

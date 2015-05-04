@@ -2,8 +2,8 @@
 	"name" : "ectophylla",
 	"version" : 1,
 	"creationdate" : -782557437,
-	"modificationdate" : -781804869,
-	"viewrect" : [ 818.0, 45.0, 300.0, 500.0 ],
+	"modificationdate" : -781606043,
+	"viewrect" : [ 2.0, 45.0, 314.0, 515.0 ],
 	"autoorganize" : 1,
 	"hideprojectwindow" : 0,
 	"showdependencies" : 1,
@@ -45,6 +45,108 @@
 				"kind" : "patcher",
 				"local" : 1
 			}
+,
+			"kasiosynth~.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1
+			}
+,
+			"czline.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1
+			}
+,
+			"noisegen.poly.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1
+			}
+,
+			"kasio.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1
+			}
+,
+			"lfomain.poly.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1
+			}
+,
+			"lfo.tri.poly.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1
+			}
+,
+			"saw.poly.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1
+			}
+
+		}
+,
+		"media" : 		{
+			"bkh.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+,
+			"dbl_sine.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+,
+			"impulse.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+,
+			"pan_2ch.512.wav" : 			{
+				"kind" : "audiofile",
+				"local" : 1
+			}
+,
+			"reso1.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+,
+			"reso2.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+,
+			"reso3.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+,
+			"saw.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+,
+			"saw_pulse.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+,
+			"sine.512+.wav" : 			{
+				"kind" : "audiofile",
+				"local" : 1
+			}
+,
+			"square.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+,
+			"wkh.png" : 			{
+				"kind" : "imagefile",
+				"local" : 1
+			}
+
+		}
+,
+		"data" : 		{
 
 		}
 ,

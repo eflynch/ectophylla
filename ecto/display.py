@@ -1,8 +1,10 @@
 from random import random
+import bisect
 
 import numpy as np
 
 from kivy.logger import Logger
+from kivy.uix.label import Label
 from kivy.graphics import PushMatrix, PopMatrix, RenderContext, Callback, Color, ChangeState
 from kivy.graphics import UpdateNormalMatrix, Translate, Rotate, Mesh, InstructionGroup, Scale
 from kivy.graphics.transformation import Matrix
@@ -29,11 +31,14 @@ class DisplayController(object):
         self.eye_pos = eye_pos
         self.eye_angle = eye_angle
         self.ac = ac
-        self.tick_range = 24000
+        self.tick_range = 12000
 
         self.canvas.shader.source = resource_find('data/simple.glsl')
 
-        self.notes = []
+        self.all_notes = []
+        self.visible_notes = {}
+        self.ticks = []
+
         # self.planes = range(0, 10 * config['PLANE_SPACING'], config['PLANE_SPACING'])
         self.planes = []
 
@@ -76,12 +81,9 @@ class DisplayController(object):
         self.draw_planes()
 
     def add_notes(self, note_data):
-        for sn in note_data:
-            if abs(sn.tick - self.ac.tick) > self.tick_range:
-                continue
-            nd = NoteDisplay(sn, self.planes, self.ac)
-            self.note_displays.add(nd)
-            self.notes.append(nd)
+        self.all_notes.extend(note_data)
+        self.all_notes.sort(key=lambda n:n.tick)
+        self.ticks = map(lambda n:n.tick, self.all_notes)
 
     def draw_planes(self):
         for p in self.planes:
@@ -131,9 +133,39 @@ class DisplayController(object):
         self.fixed_y.y = y
         self.fixed_z.z = z
 
+    def get_notes_in_range(self, start_tick, end_tick):
+      l = bisect.bisect_left(self.ticks, start_tick)
+      r = bisect.bisect_left(self.ticks, end_tick)
+      if r <= 0:
+         return []
+      return self.all_notes[l:r]
+
     def on_update(self, tick):
         self_plane_z = self.eye_pos[2] - config['SELF_PLANE_DISTANCE']
-        for s in self.notes:
+
+        eye_tick = tick + ( - self.eye_pos[2] / config['UNITS_PER_TICK'])
+
+        in_range = self.get_notes_in_range(eye_tick - self.tick_range, eye_tick + self.tick_range)
+
+        to_remove = []
+        for nd in self.visible_notes:
+            if nd not in in_range:
+                to_remove.append(nd)
+
+        for nd in to_remove:
+            ndisp = self.visible_notes[nd]
+            self.note_displays.remove(ndisp)
+            del self.visible_notes[nd]
+        
+        for nd in in_range:
+            if nd in self.visible_notes:
+                continue
+
+            ndisp = NoteDisplay(nd, self.planes, self.ac)
+            self.note_displays.add(ndisp)
+            self.visible_notes[nd] = ndisp
+
+        for s in self.visible_notes.values():
             pos = s.pos_from_tick(tick)
             s.set_pos(pos)
             s.on_update(tick)
@@ -144,6 +176,5 @@ class DisplayController(object):
                 s.sound(tick, pos)
                 s.past_me = True
 
-            if abs(s.note.tick - tick) > self.tick_range:
-                self.note_displays.remove(s)
-                self.notes.remove(s)
+
+        Logger.debug('Number of notes: %s' % len(self.visible_notes))

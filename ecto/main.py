@@ -27,7 +27,7 @@ class MainWidget(BaseWidget):
         self.canvas = RenderContext(compute_normal_mat=True)
         self.display = DisplayController(self.width, self.height, self.canvas, self.ac,
                                          self.eye_pos, self.eye_angle)
-        self.canvas = self.display.canvas
+
         self._touches = []
         self._camera_keys = []
         self.update_camera()
@@ -160,8 +160,8 @@ class MainWidget(BaseWidget):
 
         new_notes = []
         while self.note_queue:
-            if self.note_queue[0].tick > now_tick + 10000:
-                break
+            # if self.note_queue[0].tick > now_tick + 10000:
+            #     break
 
             n = self.note_queue.pop(0)
             new_notes.append(n)
