@@ -3,8 +3,10 @@ from random import random
 import numpy as np
 
 from kivy.graphics import InstructionGroup
+from kivy.core.image import Image as CoreImage
 
 from ecto.shapes import Sphere, Diamond
+from ecto.billboard import BillboardDisplay
 import ecto.synth
 from ecto.config import config
 
@@ -22,8 +24,11 @@ class NoteDisplay(InstructionGroup):
         self.sounds = []
         self.sound_group = InstructionGroup()
         self.color = COLORS[self.note.pitch % 12]
-        self.sphere = Sphere(self.pos_from_tick(ac.tick), self.color, size=0.3, intensity=0.6, tr=1.0)
-        self.add(self.sphere)
+
+        self.textures = map(lambda i: CoreImage("textures/blue%s.png" % i).texture, [0,1,2,3,2,1])
+        self.texture_frame = np.random.randint(len(self.textures))
+        self.billboard = BillboardDisplay(self.pos_from_tick(ac.tick), texture=self.textures[0], size_x=2.0, size_y=2.0)
+        self.add(self.billboard)
         self.add(self.sound_group)
 
     def pos_from_tick(self, tick):
@@ -33,7 +38,7 @@ class NoteDisplay(InstructionGroup):
         return (x, y, z)
 
     def set_pos(self, pos):
-        self.sphere.set_pos(pos)
+        self.billboard.set_pos(pos)
 
     def sound(self, tick, pos):
         # Play Sound
@@ -46,9 +51,12 @@ class NoteDisplay(InstructionGroup):
         self.sounds.sort()
         self.sound_group.add(sound_display)
 
-        self.sphere.set_color(color=(0.0, 1.0, 0.0), tr=1.0, intensity=1.0)
+        # self.billboard.set_color(color=(0.0, 1.0, 0.0), tr=1.0, intensity=1.0)
 
-    def on_update(self, tick):
+    def on_update(self, tick, angles):
+        self.texture_frame += 0.1
+        self.billboard.set_texture(self.textures[int(self.texture_frame) % len(self.textures)])
+        self.billboard.set_rotate(angles)
         while self.sounds:
             exp_tick, s = self.sounds[0]
             if exp_tick > tick:

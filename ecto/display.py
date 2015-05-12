@@ -8,6 +8,7 @@ from kivy.uix.label import Label
 from kivy.graphics import PushMatrix, PopMatrix, RenderContext, Callback, Color, ChangeState
 from kivy.graphics import UpdateNormalMatrix, Translate, Rotate, Mesh, InstructionGroup, Scale
 from kivy.graphics.transformation import Matrix
+from kivy.core.image import Image as CoreImage
 import kivy.graphics.opengl as gl
 
 from kivy.clock import Clock as kivyClock
@@ -18,6 +19,7 @@ from ecto.objloader import ObjFileLoader
 from ecto.note import Note
 from ecto.notedisplay import NoteDisplay
 from ecto.shapes import Sphere, Line, Plane
+from ecto.billboard import BillboardDisplay
 from ecto.config import config
 import ecto.synth
 
@@ -49,16 +51,22 @@ class DisplayController(object):
         self.fixed_x = Translate(0, 0, 0)
         self.fixed_y = Translate(0, 0, 0)
         self.fixed_z = Translate(0, 0, 0)
+        self.fixed_azi = Rotate(origin=(0, 0, 0), axis=(0, 1, 0))
+        self.fixed_ele = Rotate(origin=(0, 0, 0), axis=(1, 0, 0))
 
         self.canvas.add(Callback(self.setup_gl_context))
         self.canvas.add(PushMatrix())
         self.canvas.add(UpdateNormalMatrix())
 
-        self.canvas.add(self.note_displays)
+        
         
         self.canvas.add(PushMatrix())
         self.canvas.add(self.fixed_z)
         self.canvas.add(self.line_displays)
+        self.canvas.add(PopMatrix())
+
+        self.canvas.add(PushMatrix())
+        self.canvas.add(self.note_displays)
         self.canvas.add(PopMatrix())
 
         self.canvas.add(PushMatrix())
@@ -96,9 +104,11 @@ class DisplayController(object):
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)
+        # gl.glEnable(gl.GL_SAMPLE_ALPHA_TO_COVERAGE)
 
     def reset_gl_context(self, *args):
         gl.glDisable(gl.GL_DEPTH_TEST)
+        # gl.glDisable(gl.GL_SAMPLE_ALPHA_TO_COVERAGE)
 
     def get_look_at(self, x, y, z, azi, ele):
         dx = - np.sin(azi) * np.cos(ele)
@@ -131,6 +141,8 @@ class DisplayController(object):
         self.fixed_x.x = x
         self.fixed_y.y = y
         self.fixed_z.z = z
+        self.fixed_azi.angle = azi * 180/np.pi
+        self.fixed_ele.angle = ele * 180/np.pi
 
     def get_notes_in_range(self, start_tick, end_tick):
       l = bisect.bisect_left(self.ticks, start_tick)
@@ -167,7 +179,7 @@ class DisplayController(object):
         for s in self.visible_notes.values():
             pos = s.pos_from_tick(tick)
             s.set_pos(pos)
-            s.on_update(tick)
+            s.on_update(tick, self.eye_angle)
 
             if s.past_me and pos[2] < self_plane_z:
                 s.past_me = False
