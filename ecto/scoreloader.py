@@ -62,21 +62,29 @@ def load_score(name, start_tick=0):
 			tick = int(tick) + start_tick
 			all_notes.append(Note(pitch, velocity, duration, x, y, tick))
 
-	all_notes.sort(key=lambda n: n.tick)
+	all_notes.sort(key=lambda n: (n.tick, n.x, n.y))
 
-	curr_tick = -1
-	chord = []
+	curr_tup = (all_notes[0].tick, all_notes[0].x, all_notes[0].y)
+	print curr_tup
+	print [(n.tick, n.x, n.y) for n in all_notes]
+	curr_notes = []
 	for note in all_notes:
-		if note.tick == curr_tick:
-			chord.append(note)
-		elif len(chord) > 0:
-			num_notes = len(chord)
+		# print (note.tick, note.x, note.y)
+		if (note.tick, note.x, note.y) == curr_tup:
+			curr_notes.append(note)
+		elif len(curr_notes) == 1:
+			curr_notes = []
+		elif len(curr_notes) > 1:
+			num_notes = len(curr_notes)
 			angle = 2. * np.pi / num_notes
-			for i, n in enumerate(chord):
+			for i, n in enumerate(curr_notes):
+				# print "POOOOOP"
 				theta = angle*i
-				n.x = .3 * np.cos(theta) + n.x
-				n.y = .3 * np.sin(theta)
-			chord = []
-		curr_tick = note.tick
+				# print np.cos(theta)
+				# print np.sin(theta)
+				n.x += .2 * np.cos(theta) 
+				n.y += .2 * np.sin(theta) 
+			curr_notes = []
+		curr_tup = (note.tick, note.x, note.y)
 	
 	return all_notes

@@ -63,7 +63,6 @@ class NoteDisplay(InstructionGroup):
         self.billboard.set_rotate(angles)
         for exp_tick, s in self.sounds:
             if exp_tick < tick:
-                print 'dude'
                 self.sound_group.remove(s)
                 self.sounds.remove((exp_tick, s))
             
