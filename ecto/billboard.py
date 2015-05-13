@@ -20,7 +20,13 @@ class BillboardDisplay(InstructionGroup):
         self.rotate_ele = Rotate(origin=(0,0,0), axis=(1,0,0))
         self.scale = Scale()
         self.color_instruction = InstructionGroup()
-        self.mesh = self.make_mesh(rectangle_nurb, texture)
+        self.mesh = Mesh(
+            texture=texture,
+            vertices=rectangle_nurb.vertices,
+            indices=rectangle_nurb.indices,
+            fmt=rectangle_nurb.vertex_format,
+            mode='triangles'
+        )
 
         self.add(PushMatrix())
         self.add(self.translate)
@@ -31,19 +37,10 @@ class BillboardDisplay(InstructionGroup):
         self.add(self.mesh)
         self.add(PopMatrix())
 
-        self._set_color()
+        self.set_color()
         self.set_size(size_x, size_y)
         self.set_pos(pos)
         self.set_texture(texture)
-
-    def make_mesh(self, m, texture):
-        return Mesh(
-            texture=texture,
-            vertices=m.vertices,
-            indices=m.indices,
-            fmt=m.vertex_format,
-            mode='triangles'
-        )
 
     def set_texture(self, texture):
         self.texture = texture
@@ -59,16 +56,15 @@ class BillboardDisplay(InstructionGroup):
     def set_pos(self, pos):
         self.translate.xyz = pos
 
-    def _set_color(self):
+    def set_color(self, intensity=1.0, Tr=1.0):
         self.color_instruction.clear()
         self.color_instruction.add(
             ChangeState(
                 Kd=(1.0, 1.0, 1.0),
                 Ka=(1.0, 1.0, 1.0),
-                Ks=(1.0, 0.0, 0.0),
-                Tr=1.0,
+                Ks=(1.0, 1.0, 1.0),
+                Tr=Tr,
                 Ns=1.0,
-                intensity=1.0
+                intensity=intensity
             )
         )
-

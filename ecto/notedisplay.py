@@ -25,7 +25,7 @@ class NoteDisplay(InstructionGroup):
         self.sound_group = InstructionGroup()
         self.color = COLORS[self.note.pitch % 12]
 
-        self.textures = map(lambda i: CoreImage("textures/blue%s.png" % i).texture, [0,1,2,3,2,1])
+        self.textures = map(lambda i: CoreImage("textures/red%s.png" % i).texture, indices)
         self.texture_frame = np.random.randint(len(self.textures))
         self.billboard = BillboardDisplay(self.pos_from_tick(ac.tick), texture=self.textures[0], size_x=2.0, size_y=2.0)
         self.add(self.billboard)
@@ -54,7 +54,7 @@ class NoteDisplay(InstructionGroup):
         # self.billboard.set_color(color=(0.0, 1.0, 0.0), tr=1.0, intensity=1.0)
 
     def on_update(self, tick, angles):
-        self.texture_frame += 0.1
+        self.texture_frame += 1
         self.billboard.set_texture(self.textures[int(self.texture_frame) % len(self.textures)])
         self.billboard.set_rotate(angles)
         while self.sounds:
