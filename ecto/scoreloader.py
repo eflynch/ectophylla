@@ -60,7 +60,8 @@ def load_score(name, start_tick=0):
 			x = int(x)
 			y = int(y)
 			tick = int(tick) + start_tick
-			all_notes.append(Note(pitch, velocity, duration, x, y, tick))
+			channel = x % 5
+			all_notes.append(Note(channel, pitch, velocity, duration, x, y, tick))
 
 	all_notes.sort(key=lambda n: (n.tick, n.x, n.y))
 
