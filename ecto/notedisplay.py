@@ -88,8 +88,3 @@ class NoteDisplay(InstructionGroup):
                 self.sounds.remove(s)
                 self.sound_group.remove(s)
             
-
-        # if self.sound_count < len(self.planes):
-        #     if z > self.planes[self.sound_count]:
-        #         self.sound(now_tick)
-        #         self.sound_count += 1
