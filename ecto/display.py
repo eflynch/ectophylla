@@ -93,7 +93,7 @@ class DisplayController(object):
     def add_notes(self, note_data):
         s = config['LINE_SPACING']
         for nd in note_data:
-            if (nd.x, nd.y) not in self.lines:
+            if (nd.x, nd.y) not in self.lines and float(nd.x).is_integer():
                 self.line_displays.add(Line(nd.x * s, nd.y * s, color=(0.7, 0.5, 0.0)))
                 self.lines.append((nd.x, nd.y))
 
@@ -224,7 +224,7 @@ class DisplayController(object):
         for s in self.future_notes.values() + self.past_notes.values():
             pos = s.pos_from_tick(tick)
             s.set_pos(pos)
-            s.on_update(tick, self.eye_angle)
+            s.on_update(eye_tick, self.eye_angle)
 
             if s.past_me and pos[2] < self_plane_z:
                 s.past_me = False

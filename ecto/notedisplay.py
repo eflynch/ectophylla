@@ -53,21 +53,20 @@ class NoteDisplay(InstructionGroup):
 
         # Render Sound
         exp_tick = tick + self.note.duration
-        sound_display = Diamond(pos, size=0.2, color=(1,0,0), intensity=0.5)
+        sound_display = BillboardDisplay(pos, texture=textures[self.texture_indices[0]], size_x=2.0, size_y=2.0, intensity=1.0, Tr=1.0)
         self.sounds.append((exp_tick, sound_display))
-        self.sounds.sort()
         self.sound_group.add(sound_display)
 
     def on_update(self, tick, angles):
         self.texture_frame += 1
         self.billboard.set_texture(textures[self.texture_indices[int(self.texture_frame) % len(self.texture_indices)]])
         self.billboard.set_rotate(angles)
-        while self.sounds:
-            exp_tick, s = self.sounds[0]
-            if exp_tick > tick:
-                break
-            exp_tick, s = self.sounds.pop(0)
-            self.sound_group.remove(s)
+        for exp_tick, s in self.sounds:
+            if exp_tick < tick:
+                print 'dude'
+                self.sound_group.remove(s)
+                self.sounds.remove((exp_tick, s))
+            
 
         # if self.sound_count < len(self.planes):
         #     if z > self.planes[self.sound_count]:
