@@ -1,4 +1,5 @@
 from ecto.note import Note
+import numpy as np
 
 # Schema:
 # [pitch int] [velocity float] [duration int] [x int] [y int] [tick int]
@@ -40,7 +41,7 @@ def midi_to_txt(name):
 					tick = running_notes[n][0]
 					vel = running_notes[n][1] / 127.
 
-					
+	
 
 					line = '%s %s %s %s %s %s' % (n, vel, duration, x, y, tick)
 
@@ -62,5 +63,20 @@ def load_score(name, start_tick=0):
 			all_notes.append(Note(pitch, velocity, duration, x, y, tick))
 
 	all_notes.sort(key=lambda n: n.tick)
+
+	curr_tick = -1
+	chord = []
+	for note in all_notes:
+		if note.tick == curr_tick:
+			chord.append(note)
+		elif len(chord) > 0:
+			num_notes = len(chord)
+			angle = 2. * np.pi / num_notes
+			for i, n in enumerate(chord):
+				theta = angle*i
+				n.x = .3 * np.cos(theta) + n.x
+				n.y = .3 * np.sin(theta)
+			chord = []
+		curr_tick = note.tick
 	
 	return all_notes
