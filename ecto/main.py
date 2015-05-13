@@ -108,6 +108,10 @@ class MainWidget(BaseWidget):
             note_data = load_score('handel')
             self.display.add_notes(note_data)
 
+        elif keycode[1] == 'v':
+            note_data = load_score('valkyrie')
+            self.display.add_notes(note_data)
+
         elif keycode[1] == 'spacebar':
             now_tick = self.ac.tick
             x = randint(-5, 5)
