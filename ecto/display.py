@@ -37,14 +37,16 @@ class DisplayController(object):
         self.canvas.shader.source = resource_find('data/simple.glsl')
 
         self.all_notes = []
-        self.visible_notes = {}
+        self.future_notes = {}
+        self.past_notes = {}
         self.ticks = []
 
         # self.planes = range(0, 10 * config['PLANE_SPACING'], config['PLANE_SPACING'])
         self.planes = []
         self.lines = []
 
-        self.note_displays = InstructionGroup()
+        self.past_displays = InstructionGroup()
+        self.future_displays = InstructionGroup()
         self.plane_displays = InstructionGroup()
         self.line_displays = InstructionGroup()
 
@@ -66,7 +68,8 @@ class DisplayController(object):
         self.canvas.add(PopMatrix())
 
         self.canvas.add(PushMatrix())
-        self.canvas.add(self.note_displays)
+        self.canvas.add(self.past_displays)
+        self.canvas.add(self.future_displays)
         self.canvas.add(PopMatrix())
 
         self.canvas.add(PushMatrix())
@@ -90,7 +93,7 @@ class DisplayController(object):
     def add_notes(self, note_data):
         s = config['LINE_SPACING']
         for nd in note_data:
-            if (nd.x, nd.y) not in self.lines:
+            if (nd.x, nd.y) not in self.lines and float(nd.x).is_integer():
                 self.line_displays.add(Line(nd.x * s, nd.y * s, color=(0.7, 0.5, 0.0)))
                 self.lines.append((nd.x, nd.y))
 
@@ -156,30 +159,72 @@ class DisplayController(object):
 
         eye_tick = tick + ( - self.eye_pos[2] / config['UNITS_PER_TICK'])
 
-        in_range = self.get_notes_in_range(eye_tick - config['VISIBLE_TICK_RANGE'], eye_tick + config['VISIBLE_TICK_RANGE'])
+        future_range = self.get_notes_in_range(eye_tick, eye_tick + config['VISIBLE_TICK_RANGE'])
+        past_range = self.get_notes_in_range(eye_tick - config['VISIBLE_TICK_RANGE'], eye_tick)
 
-        to_remove = []
-        for nd in self.visible_notes:
-            if nd not in in_range:
-                to_remove.append(nd)
+        # COMPLEX LOGIC TO MAINTAIN LISTS OF VISIBLE NOTES ORDERED BY DISTANCE FROM CAMERA
+        # far future <-> future
+        # future <-> past
+        # past <-> far past
 
-        for nd in to_remove:
-            ndisp = self.visible_notes[nd]
-            self.note_displays.remove(ndisp)
-            del self.visible_notes[nd]
-        
-        for nd in in_range:
-            if nd in self.visible_notes:
-                continue
+        # far future -> future
+        fftof = list(x for x in future_range if x not in self.past_notes and x not in self.future_notes)
+        # future -> far future
+        ftoff = list(x for x in self.future_notes if x not in future_range and x not in past_range)
+        # future -> past
+        ftop = list(x for x in past_range if x in self.future_notes)
+        # past -> future
+        ptof = list(x for x in future_range if x in self.past_notes)
+        # past -> far past
+        ptofp = list(x for x in self.past_notes if x not in future_range and x not in past_range)
+        # far past -> past
+        fptop = list(x for x in past_range if x not in self.past_notes and x not in self.future_notes)
 
+        # handle ff -> f
+        for nd in sorted(fftof, key=lambda n: n.tick):
             ndisp = NoteDisplay(nd, self.planes, self.ac)
-            self.note_displays.add(ndisp)
-            self.visible_notes[nd] = ndisp
+            self.future_displays.insert(0, ndisp)
+            self.future_notes[nd] = ndisp
 
-        for s in self.visible_notes.values():
+        # handle f -> ff
+        for nd in ftoff:
+            ndisp = self.future_notes[nd]
+            self.future_displays.remove(ndisp)
+            del self.future_notes[nd]
+
+        # handle f -> p
+        for nd in sorted(ftop, key=lambda n: n.tick):
+            ndisp = self.future_notes[nd]
+            self.future_displays.remove(ndisp)
+            self.past_displays.add(ndisp)
+            self.past_notes[nd] = ndisp
+            del self.future_notes[nd]
+
+        # handle p -> f
+        for nd in sorted(ptof, key=lambda n: -n.tick):
+            ndisp = self.past_notes[nd]
+            self.past_displays.remove(ndisp)
+            self.future_displays.add(ndisp)
+            self.future_notes[nd] = ndisp
+            del self.past_notes[nd]
+
+        # handle p -> fp
+        for nd in ptofp:
+            ndisp = self.past_notes[nd]
+            self.past_displays.remove(ndisp)
+            del self.past_notes[nd]
+
+        # handle fp -> p
+        for nd in sorted(fptop, key=lambda n: -n.tick):
+            ndisp = NoteDisplay(nd, self.planes, self.ac)
+            self.past_displays.insert(0, ndisp)
+            self.past_notes[nd] = ndisp
+
+
+        for s in self.future_notes.values() + self.past_notes.values():
             pos = s.pos_from_tick(tick)
             s.set_pos(pos)
-            s.on_update(tick, self.eye_angle)
+            s.on_update(eye_tick, self.eye_angle)
 
             if s.past_me and pos[2] < self_plane_z:
                 s.past_me = False
@@ -188,4 +233,4 @@ class DisplayController(object):
                 s.past_me = True
 
 
-        Logger.debug('Number of notes: %s' % len(self.visible_notes))
+        Logger.debug('Number of notes: %s' % (len(self.future_notes) + len(self.past_notes)))

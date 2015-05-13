@@ -10,10 +10,11 @@ rectangle_nurb = nurbs.objects['rectangle']
 
 
 class BillboardDisplay(InstructionGroup):
-    def __init__(self, pos, texture, size_x=1.0, size_y=1.0, intensity=1.0):
+    def __init__(self, pos, texture, size_x=1.0, size_y=1.0, intensity=1.0, Tr=1.0):
         super(BillboardDisplay, self).__init__()
         
         self.intensity = intensity
+        self.Tr = Tr
 
         self.translate = Translate()
         self.rotate_azi = Rotate(origin=(0,0,0), axis=(0,1,0))
@@ -37,7 +38,7 @@ class BillboardDisplay(InstructionGroup):
         self.add(self.mesh)
         self.add(PopMatrix())
 
-        self.set_color()
+        self.set_color(intensity=intensity, Tr=Tr)
         self.set_size(size_x, size_y)
         self.set_pos(pos)
         self.set_texture(texture)
@@ -60,9 +61,9 @@ class BillboardDisplay(InstructionGroup):
         self.color_instruction.clear()
         self.color_instruction.add(
             ChangeState(
-                Kd=(0.4, 0.4, 0.4),
-                Ka=(1.0, 1.0, 1.0),
-                Ks=(0.4, 0.4, 0.4),
+                Kd=(0.6, 0.6, 0.6),
+                Ka=(0.8, 0.8, 0.8),
+                Ks=(0.9, 0.9, 0.9),
                 Tr=Tr,
                 Ns=1.0,
                 intensity=intensity
