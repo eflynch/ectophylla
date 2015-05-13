@@ -1,5 +1,6 @@
 class Note(object):
-    def __init__(self, pitch, velocity, duration, x, y, tick):
+    def __init__(self, channel, pitch, velocity, duration, x, y, tick):
+        self.channel = channel
         self.pitch = pitch
         self.velocity = velocity
         self.duration = duration

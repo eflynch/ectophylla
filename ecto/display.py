@@ -227,7 +227,7 @@ class DisplayController(object):
             s.set_pos(pos)
             s.on_update(dt, eye_tick, self.eye_angle)
 
-            if s.past_me and pos[2] < self_plane_z:
+            if s.past_me and pos[2] < self_plane_z - 0.5 * config['SELF_PLANE_DISTANCE']:
                 s.past_me = False
             if pos[2] > self_plane_z and not s.past_me:
                 s.sound(tick, pos)

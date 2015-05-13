@@ -26,7 +26,7 @@ class AudioController(object):
         # end_pos = (x, y, z + (config['UNITS_PER_TICK'] * note.duration) * 2)
         time = duration * 2
 
-        synth.send_note(note.pitch, note.velocity, duration,
+        synth.send_note(note.channel, note.pitch, note.velocity, duration,
                         start_pos, end_pos, time)
 
     @property
