@@ -60,9 +60,9 @@ class BillboardDisplay(InstructionGroup):
         self.color_instruction.clear()
         self.color_instruction.add(
             ChangeState(
-                Kd=(1.0, 1.0, 1.0),
+                Kd=(0.4, 0.4, 0.4),
                 Ka=(1.0, 1.0, 1.0),
-                Ks=(1.0, 1.0, 1.0),
+                Ks=(0.4, 0.4, 0.4),
                 Tr=Tr,
                 Ns=1.0,
                 intensity=intensity

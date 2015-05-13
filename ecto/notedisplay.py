@@ -10,7 +10,11 @@ from ecto.billboard import BillboardDisplay
 import ecto.synth
 from ecto.config import config
 
-COLORS = { i: (random(), random(), random()) for i in xrange(12)}
+from ecto.yrange import Yrange
+
+COLORS = ['red', 'orange', 'yellow', 'lightgreen', 'green', 'teal', 'lightblue', 'bluesteel', 'blue', 'pink', 'purple', 'burgundy']
+for color in COLORS:
+    map(lambda i: CoreImage("textures/%s%s.png" % (color, i)).texture, range(100))
 
 class NoteDisplay(InstructionGroup):
     def __init__(self, note_data, planes, ac):
@@ -25,7 +29,8 @@ class NoteDisplay(InstructionGroup):
         self.sound_group = InstructionGroup()
         self.color = COLORS[self.note.pitch % 12]
 
-        self.textures = map(lambda i: CoreImage("textures/red%s.png" % i).texture, indices)
+        indices = range(100)
+        self.textures = map(lambda i: CoreImage("textures/%s%s.png" % (self.color, i)).texture, indices)
         self.texture_frame = np.random.randint(len(self.textures))
         self.billboard = BillboardDisplay(self.pos_from_tick(ac.tick), texture=self.textures[0], size_x=2.0, size_y=2.0)
         self.add(self.billboard)
@@ -46,12 +51,10 @@ class NoteDisplay(InstructionGroup):
 
         # Render Sound
         exp_tick = tick + self.note.duration
-        sound_display = Diamond(pos, size=0.2, color=self.color, intensity=0.5)
+        sound_display = Diamond(pos, size=0.2, color=(1,0,0), intensity=0.5)
         self.sounds.append((exp_tick, sound_display))
         self.sounds.sort()
         self.sound_group.add(sound_display)
-
-        # self.billboard.set_color(color=(0.0, 1.0, 0.0), tr=1.0, intensity=1.0)
 
     def on_update(self, tick, angles):
         self.texture_frame += 1
