@@ -32,7 +32,7 @@ def midi_to_txt(name):
 			running_notes = {}
 			i = sorted(channels.keys()).index(ch)
 			x = (i % 5) - 5
-			y = (i - (i % 5))/10 - 5
+			y = (i - (i % 5))/10 
 			for t, n, v in channels[ch]:
 				if v > 0:
 					running_notes[n] = t, v
