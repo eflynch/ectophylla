@@ -1,4 +1,5 @@
 from ecto.note import Note
+import numpy as np
 
 # Schema:
 # [pitch int] [velocity float] [duration int] [x int] [y int] [tick int]
@@ -31,7 +32,7 @@ def midi_to_txt(name):
 			running_notes = {}
 			i = sorted(channels.keys()).index(ch)
 			x = (i % 5) - 5
-			y = (i - (i % 5))/10 - 5
+			y = (i - (i % 5))/10 
 			for t, n, v in channels[ch]:
 				if v > 0:
 					running_notes[n] = t, v
@@ -40,7 +41,7 @@ def midi_to_txt(name):
 					tick = running_notes[n][0]
 					vel = running_notes[n][1] / 127.
 
-					
+	
 
 					line = '%s %s %s %s %s %s' % (n, vel, duration, x, y, tick)
 
@@ -61,6 +62,26 @@ def load_score(name, start_tick=0):
 			tick = int(tick) + start_tick
 			all_notes.append(Note(pitch, velocity, duration, x, y, tick))
 
-	all_notes.sort(key=lambda n: n.tick)
+	all_notes.sort(key=lambda n: (n.tick, n.x, n.y))
+
+	curr_tup = (-37.2, -37.2, -37.2)
+	curr_notes = []
+	for note in all_notes:
+		if (note.tick, note.x, note.y) == curr_tup:
+			curr_notes.append(note)
+		else:
+			if len(curr_notes) == 1:
+				pass
+			elif len(curr_notes) > 1:
+				num_notes = len(curr_notes)
+				angle = 2. * np.pi / num_notes
+				for i, n in enumerate(curr_notes):
+					theta = angle*i + np.pi/2
+					n.x += .08 * np.cos(theta) 
+					n.y += .08 * np.sin(theta) 
+
+			curr_notes = [note]
+			curr_tup = (note.tick, note.x, note.y)
+		
 	
 	return all_notes

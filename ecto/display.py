@@ -93,7 +93,7 @@ class DisplayController(object):
     def add_notes(self, note_data):
         s = config['LINE_SPACING']
         for nd in note_data:
-            if (nd.x, nd.y) not in self.lines and float(nd.x).is_integer():
+            if (nd.x, nd.y) not in self.lines and float(nd.x).is_integer() and float(nd.y).is_integer():
                 self.line_displays.add(Line(nd.x * s, nd.y * s, color=(0.7, 0.5, 0.0)))
                 self.lines.append((nd.x, nd.y))
 
