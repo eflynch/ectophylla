@@ -158,6 +158,7 @@ class DisplayController(object):
         self_plane_z = self.eye_pos[2] - config['SELF_PLANE_DISTANCE']
 
         eye_tick = tick + ( - self.eye_pos[2] / config['UNITS_PER_TICK'])
+        dt = kivyClock.frametime
 
         future_range = self.get_notes_in_range(eye_tick, eye_tick + config['VISIBLE_TICK_RANGE'])
         past_range = self.get_notes_in_range(eye_tick - config['VISIBLE_TICK_RANGE'], eye_tick)
@@ -224,7 +225,7 @@ class DisplayController(object):
         for s in self.future_notes.values() + self.past_notes.values():
             pos = s.pos_from_tick(tick)
             s.set_pos(pos)
-            s.on_update(eye_tick, self.eye_angle)
+            s.on_update(dt, eye_tick, self.eye_angle)
 
             if s.past_me and pos[2] < self_plane_z:
                 s.past_me = False
