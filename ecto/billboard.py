@@ -37,7 +37,7 @@ class BillboardDisplay(InstructionGroup):
         self.add(self.mesh)
         self.add(PopMatrix())
 
-        self.set_color()
+        self.set_color(intensity=intensity)
         self.set_size(size_x, size_y)
         self.set_pos(pos)
         self.set_texture(texture)
@@ -60,9 +60,9 @@ class BillboardDisplay(InstructionGroup):
         self.color_instruction.clear()
         self.color_instruction.add(
             ChangeState(
-                Kd=(0.4, 0.4, 0.4),
-                Ka=(1.0, 1.0, 1.0),
-                Ks=(0.4, 0.4, 0.4),
+                Kd=(0.6, 0.6, 0.6),
+                Ka=(0.8, 0.8, 0.8),
+                Ks=(0.9, 0.9, 0.9),
                 Tr=Tr,
                 Ns=1.0,
                 intensity=intensity

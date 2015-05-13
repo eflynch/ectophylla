@@ -13,8 +13,10 @@ from ecto.config import config
 from ecto.yrange import Yrange
 
 COLORS = ['red', 'orange', 'yellow', 'lightgreen', 'green', 'teal', 'lightblue', 'bluesteel', 'blue', 'pink', 'purple', 'burgundy']
+textures = {}
 for color in COLORS:
-    map(lambda i: CoreImage("textures/%s%s.png" % (color, i)).texture, range(100))
+    for i in xrange(101):
+        textures[(color, i)] = CoreImage("textures/%s%s.png" % (color, i)).texture
 
 class NoteDisplay(InstructionGroup):
     def __init__(self, note_data, planes, ac):
@@ -28,11 +30,11 @@ class NoteDisplay(InstructionGroup):
         self.sounds = []
         self.sound_group = InstructionGroup()
         self.color = COLORS[self.note.pitch % 12]
+        self.intensity = self.note.velocity
 
-        indices = range(100)
-        self.textures = map(lambda i: CoreImage("textures/%s%s.png" % (self.color, i)).texture, indices)
-        self.texture_frame = np.random.randint(len(self.textures))
-        self.billboard = BillboardDisplay(self.pos_from_tick(ac.tick), texture=self.textures[0], size_x=2.0, size_y=2.0)
+        self.texture_indices = [(self.color, i)  for i in range(100) +list(reversed(xrange(1,101)))]
+        self.texture_frame = np.random.randint(len(self.texture_indices))
+        self.billboard = BillboardDisplay(self.pos_from_tick(ac.tick), texture=textures[self.texture_indices[0]], size_x=2.0, size_y=2.0, intensity=self.intensity)
         self.add(self.billboard)
         self.add(self.sound_group)
 
@@ -58,7 +60,7 @@ class NoteDisplay(InstructionGroup):
 
     def on_update(self, tick, angles):
         self.texture_frame += 1
-        self.billboard.set_texture(self.textures[int(self.texture_frame) % len(self.textures)])
+        self.billboard.set_texture(textures[self.texture_indices[int(self.texture_frame) % len(self.texture_indices)]])
         self.billboard.set_rotate(angles)
         while self.sounds:
             exp_tick, s = self.sounds[0]
