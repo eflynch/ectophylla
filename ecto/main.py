@@ -55,7 +55,8 @@ class MainWidget(BaseWidget):
         self.set_camera_angle((self.eye_angle[0] + dazi, self.eye_angle[1] + dele))
 
     def handle_camera_key(self, key):
-        SPEED = 0.4
+        dt = kivyClock.frametime
+        SPEED = 40 * dt
         dy = dx = dz = dazi = dele = 0
         if key == 'q': # up
             dy = -SPEED
@@ -101,7 +102,7 @@ class MainWidget(BaseWidget):
             self.display.add_notes(note_data)
 
         elif keycode[1] == 'k':
-            note_data = load_score('king')
+            note_data = load_score('king2')
             self.display.add_notes(note_data)
 
         elif keycode[1] == 'h':
@@ -109,8 +110,11 @@ class MainWidget(BaseWidget):
             self.display.add_notes(note_data)
 
         elif keycode[1] == 'v':
-            note_data = load_score('valkyrie')
+            note_data = load_score('valkyrie2')
             self.display.add_notes(note_data)
+
+        elif keycode[1] == '.':
+            self.display.toggle_alpha_sample()
 
         elif keycode[1] == 'spacebar':
             now_tick = self.ac.tick

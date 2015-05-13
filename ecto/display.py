@@ -56,7 +56,14 @@ class DisplayController(object):
         self.fixed_azi = Rotate(origin=(0, 0, 0), axis=(0, 1, 0))
         self.fixed_ele = Rotate(origin=(0, 0, 0), axis=(1, 0, 0))
 
+        self.alpha_callback = Callback(self.alpha_sample_callback)
+        self.disable_alpha_callback = Callback(self.disable_alpha_sample_callback)
+        self.alpha_instruction = InstructionGroup()
+        self.alpha_disable_instruction = InstructionGroup()
+        self.alpha_sample_enable = False
+
         self.canvas.add(Callback(self.setup_gl_context))
+        self.canvas.add(self.alpha_instruction)
         self.canvas.add(PushMatrix())
         self.canvas.add(UpdateNormalMatrix())
 
@@ -86,6 +93,7 @@ class DisplayController(object):
         # self.canvas.add(PopMatrix())
 
         self.canvas.add(PopMatrix())
+        self.canvas.add(self.alpha_disable_instruction)
         self.canvas.add(Callback(self.reset_gl_context))
 
         self.draw_planes()
@@ -107,11 +115,25 @@ class DisplayController(object):
 
     def setup_gl_context(self, *args):
         gl.glEnable(gl.GL_DEPTH_TEST)
-        # gl.glEnable(gl.GL_SAMPLE_ALPHA_TO_COVERAGE)
+
+    def toggle_alpha_sample(self):
+        if self.alpha_sample_enable:
+            self.alpha_instruction.remove(self.alpha_callback)
+            self.alpha_disable_instruction.remove(self.disable_alpha_callback)
+            self.alpha_sample_enable = False
+        else:
+            self.alpha_instruction.add(self.alpha_callback)
+            self.alpha_disable_instruction.add(self.disable_alpha_callback)
+            self.alpha_sample_enable = True
+
+    def alpha_sample_callback(self, *args):
+        gl.glEnable(gl.GL_SAMPLE_ALPHA_TO_COVERAGE)
 
     def reset_gl_context(self, *args):
         gl.glDisable(gl.GL_DEPTH_TEST)
-        # gl.glDisable(gl.GL_SAMPLE_ALPHA_TO_COVERAGE)
+
+    def disable_alpha_sample_callback(self, *args):
+        gl.glDisable(gl.GL_SAMPLE_ALPHA_TO_COVERAGE)
 
     def get_look_at(self, x, y, z, azi, ele):
         dx = - np.sin(azi) * np.cos(ele)
