@@ -64,27 +64,24 @@ def load_score(name, start_tick=0):
 
 	all_notes.sort(key=lambda n: (n.tick, n.x, n.y))
 
-	curr_tup = (all_notes[0].tick, all_notes[0].x, all_notes[0].y)
-	print curr_tup
-	print [(n.tick, n.x, n.y) for n in all_notes]
+	curr_tup = (-37.2, -37.2, -37.2)
 	curr_notes = []
 	for note in all_notes:
-		# print (note.tick, note.x, note.y)
 		if (note.tick, note.x, note.y) == curr_tup:
 			curr_notes.append(note)
-		elif len(curr_notes) == 1:
-			curr_notes = []
-		elif len(curr_notes) > 1:
-			num_notes = len(curr_notes)
-			angle = 2. * np.pi / num_notes
-			for i, n in enumerate(curr_notes):
-				# print "POOOOOP"
-				theta = angle*i
-				# print np.cos(theta)
-				# print np.sin(theta)
-				n.x += .2 * np.cos(theta) 
-				n.y += .2 * np.sin(theta) 
-			curr_notes = []
-		curr_tup = (note.tick, note.x, note.y)
+		else:
+			if len(curr_notes) == 1:
+				pass
+			elif len(curr_notes) > 1:
+				num_notes = len(curr_notes)
+				angle = 2. * np.pi / num_notes
+				for i, n in enumerate(curr_notes):
+					theta = angle*i + np.pi/2
+					n.x += .08 * np.cos(theta) 
+					n.y += .08 * np.sin(theta) 
+
+			curr_notes = [note]
+			curr_tup = (note.tick, note.x, note.y)
+		
 	
 	return all_notes
